@@ -12,14 +12,15 @@ Enhanced Formik exposes 3 exports:
 this and feed it children. It doesn't eat props, only children.
 
 `EnhancedFormik` Component - Looks identical to normal `Formik`.
-You shouldn't be able to tell the difference from the outside.
+You shouldn't be able to tell the difference from the outside. Is there even a difference?
 Use this instead of the vanilla `Formik`.
 
 `useFormikSubmit` hook - Tie this into your _full_ form 
-submit.
+submit. Usually a button. Two buttons if you're frisky. (Don't do that, it's terrible UX)
 Params:
 * `onSubmit` - required function. Invoked on successful form validation/submit
 * `onError` - optional function. Invoked when any form inside the `FormContextWrapper` has a validation error
+
 ex:
 ```
 const onSubmit = (formValues) => console.log(formValues)
