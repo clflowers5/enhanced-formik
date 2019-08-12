@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react'
 
 import { FormSubmitContext, FormValuesContext, FormValidationContext } from './form-contexts'
 
-function useFormikSubmit ({ onSubmit, onError }) {
+function useFormikSubmit ({ onSubmit, onError = () => {} }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { submitHandlers } = useContext(FormSubmitContext)
   const { validationHandlers } = useContext(FormValidationContext)
