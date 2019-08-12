@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { withFormik } from 'formik'
 
 import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
@@ -45,7 +45,7 @@ function EnhancedFormik ({
     addFormValues(values)
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const EnhancedComp1 = withFormik({
       // enableReinitialize: true,
       mapPropsToValues: () => initialValues,
