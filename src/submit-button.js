@@ -11,6 +11,7 @@ function SubmitButton ({
   className,
   onError,
   onSubmit,
+  ...rest
 }) {
   const submitForm = useFormikSubmit({
     onSubmit,
@@ -20,7 +21,7 @@ function SubmitButton ({
     <button
       className={className}
       onClick={submitForm}
-      data-testid='rtl-formik-submit-button'
+      {...rest}
     >
       {children}
     </button>

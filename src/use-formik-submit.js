@@ -47,9 +47,16 @@ function useFormikSubmit ({ onSubmit, onError }) {
   }, [isSubmitting, formValues, onSubmit])
 
   async function submit () {
-    // submitForm does not reject if invalid per docs
+    // submitForm does not reject if invalid per docs // todo: look at this, still don't think it rejects
     // run all submit handlers
-    await Promise.all(Object.values(submitHandlers).map(handler => handler()))
+    debugger
+    try {
+      const r = await Promise.all(Object.values(submitHandlers).map(handler => handler()))
+      console.log('lies', r)
+    } catch (err) {
+      debugger
+      console.log('huh', err)
+    }
 
     const customResults = await Promise.all(customSubmitHandlers)
     customResults.forEach(result => result && addFormValues(result))

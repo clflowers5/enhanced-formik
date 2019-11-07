@@ -41,12 +41,10 @@ function FormikWrapper ({ children, name, render, ...props }) {
       submitForm={props.submitForm}
       validateForm={props.validateForm}
     >
-      {// honor render first, then fallback to children
-        typeof render === 'function'
-          ? render(props)
-          : typeof children === 'function'
-            ? children(props)
-            : children
+      {
+        typeof children === 'function'
+          ? children(props)
+          : children
       }
     </FormWrapper>
   )

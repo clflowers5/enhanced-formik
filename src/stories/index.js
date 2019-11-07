@@ -110,6 +110,9 @@ function FormContainerA () {
   )
 }
 
+// todo: potential stopper - verify previous version
+// 'submitForm' above also triggers example_form's submit - this shouldn't happen
+
 function FormContainerB () {
   return (
     <div>
