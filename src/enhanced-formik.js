@@ -15,7 +15,7 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
   const { addFormValues, removeFormValues } = useContext(FormValuesContext)
 
   useEffect(() => {
-    addFormValues(values)
+    addFormValues(name, values)
     return () => {
       removeFormValues(name)
     }

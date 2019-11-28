@@ -37,29 +37,23 @@ function useFormikSubmit ({ onSubmit, onError }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { submitHandlers } = useContext(FormSubmitContext)
   const { validationHandlers } = useContext(FormValidationContext)
-  const { formValues, addFormValues } = useContext(FormValuesContext)
+  const { formValues, formNameValues, addFormValues } = useContext(FormValuesContext)
 
   useEffect(() => {
     if (isSubmitting && formValues) {
-      onSubmit(formValues)
+      onSubmit(formValues, formNameValues)
       setIsSubmitting(false)
     }
-  }, [isSubmitting, formValues, onSubmit])
+  }, [isSubmitting, formValues, formNameValues, onSubmit])
 
   async function submit () {
     // submitForm does not reject if invalid per docs // todo: look at this, still don't think it rejects
     // run all submit handlers
-    debugger
-    try {
-      const r = await Promise.all(Object.values(submitHandlers).map(handler => handler()))
-      console.log('lies', r)
-    } catch (err) {
-      debugger
-      console.log('huh', err)
-    }
+    await Promise.all(Object.values(submitHandlers).map(handler => handler()))
 
+    // todo: this would require extra work for the name
     const customResults = await Promise.all(customSubmitHandlers)
-    customResults.forEach(result => result && addFormValues(result))
+    customResults.forEach(result => result && addFormValues('tmp', result))
 
     // run all validations and flatten error object
     const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))

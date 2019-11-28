@@ -5,7 +5,8 @@ import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import * as yup from 'yup'
 
-import { EnhancedFormik, FormContextWrapper, useFormikSubmit } from './../index'
+import { EnhancedFormik, FormContextWrapper, FormValuesContext, SubmitButton } from './../index'
+import FormValues from './../FormValues'
 
 storiesOf('Enhanced Formik', module)
   .add('default', () =>
@@ -14,15 +15,9 @@ storiesOf('Enhanced Formik', module)
     </div>,
   )
 
-const SubmitButton = ({ onSubmit, onError }) => {
-  const submit = useFormikSubmit({
-    onSubmit,
-    onError,
-  })
-  return <button type='submit' onClick={submit}>Click me!</button>
-}
-
 function ExampleForm () {
+  const [displayForm2, setDisplayForm2] = React.useState(true)
+  const toggleForm2 = React.useCallback(() => setDisplayForm2((prevValue) => !prevValue), [])
   return (
     <div>
       <FormContextWrapper>
@@ -43,17 +38,37 @@ function ExampleForm () {
                   />
                   <ErrorMessage name='randomKey' />
                 </div>
-                <FormContainerA />
-                <FormContainerB />
-                <SubmitButton
-                  onSubmit={action('Success: onSubmit Form values:')}
-                  onError={action('Error: onError Form errors:')}
-                />
               </Form>
             </div>
           )}
         </EnhancedFormik>
+        {displayForm2 && (
+          <>
+            <FormContainerA />
+            <FormContainerB />
+          </>
+        )}
+        <SubmitButton
+          onSubmit={action('Success: onSubmit Form values:')}
+          onError={action('Error: onError Form errors:')}
+        >DO the submit</SubmitButton>
+
+        <div>
+          <button onClick={toggleForm2}>Make form 2 go away!</button>
+        </div>
+
+        <MyValues />
       </FormContextWrapper>
+    </div>
+  )
+}
+
+function MyValues () {
+  const { formNameValues } = React.useContext(FormValuesContext)
+  return (
+    <div>
+      <FormValues />
+      <FormValues name='Form Name Values' values={formNameValues} />
     </div>
   )
 }
@@ -69,11 +84,14 @@ function transformEmptyValues (value, originalValue) {
 function FormContainerA () {
   // example of independent validation/submitting while still working in bigger picture
   const submitRef = React.useRef()
+
+  const { formNameValues } = React.useContext(FormValuesContext)
+  const initialValues = formNameValues['form_a']
   return (
     <div>
       <EnhancedFormik
         name='form_a'
-        initialValues={{
+        initialValues={initialValues || {
           obj: {
             foo: '',
             bar: '',
@@ -81,8 +99,8 @@ function FormContainerA () {
         }}
         validationSchema={yup.object().shape({
           obj: yup.object({
-            foo: yup.string().min(5, 'foo not longer than 5').transform(transformEmptyValues).nullable(),
-            bar: yup.string().max(5, 'need not more than 5').transform(transformEmptyValues).nullable(),
+            foo: yup.string().required('i need').min(5, 'foo not longer than 5').transform(transformEmptyValues).nullable(),
+            bar: yup.string().required('u need').max(5, 'need not more than 5').transform(transformEmptyValues).nullable(),
           }),
         })}
         validateOnBlur={false}
@@ -103,7 +121,11 @@ function FormContainerA () {
       </EnhancedFormik>
       <button
         type='submit'
-        onClick={() => submitRef && submitRef.current && submitRef.current()}
+        onClick={() => {
+          if (submitRef && submitRef.current) {
+            submitRef.current()
+          }
+        }}
       >Validate form 1 independently
       </button>
     </div>
@@ -114,11 +136,14 @@ function FormContainerA () {
 // 'submitForm' above also triggers example_form's submit - this shouldn't happen
 
 function FormContainerB () {
+  const { formNameValues } = React.useContext(FormValuesContext)
+  const initialValues = formNameValues['form_b']
+
   return (
     <div>
       <EnhancedFormik
         name='form_b'
-        initialValues={{
+        initialValues={initialValues || {
           foo2: '',
           bar2: '',
         }}

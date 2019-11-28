@@ -11,20 +11,22 @@ function SubmitButton ({
   className,
   onError,
   onSubmit,
+  as,
   ...rest
 }) {
   const submitForm = useFormikSubmit({
     onSubmit,
     onError,
   })
+  const Component = as
   return (
-    <button
+    <Component
       className={className}
       onClick={submitForm}
       {...rest}
     >
       {children}
-    </button>
+    </Component>
   )
 }
 
@@ -33,6 +35,11 @@ SubmitButton.propTypes = {
   className: PropTypes.string,
   onError: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
+  as: PropTypes.elementType,
+}
+
+SubmitButton.defaultProps = {
+  as: 'button',
 }
 
 export default SubmitButton

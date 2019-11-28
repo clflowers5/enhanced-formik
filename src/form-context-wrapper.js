@@ -14,48 +14,55 @@ import {
  * @param initialSubmitHandlers !!You should not need to provide this outside of tests!!
  * @param initialValidationHandlers !!You should not need to provide this outside of tests!!
  * @param initialFormValues !!You should not need to provide this outside of tests!!
+ * @param initialFormNameValues !!You should not need to provide this outside of tests!!
  */
 function FormContextWrapper ({
   children,
   initialFormValues,
   initialSubmitHandlers,
   initialValidationHandlers,
+  initialFormNameValues,
 }) {
   const [submitHandlers, setSubmitHandlers] = useState(initialSubmitHandlers)
   const [validationHandlers, setValidationHandlers] = useState(initialValidationHandlers)
   const [formValues, setFormValues] = useState(initialFormValues)
+  const [formNameValues, setFormNameValues] = useState(initialFormNameValues)
+
+  console.log('rerendering wrapper')
 
   const addSubmitHandler = useCallback((handler) => {
-    setSubmitHandlers((prevState) => Object.assign({}, prevState, handler))
+    setSubmitHandlers((prevState) => ({ ...prevState, ...handler }))
   }, [setSubmitHandlers])
 
   const removeSubmitHandler = useCallback((handler) => {
     setSubmitHandlers((prevState) => {
-      const newState = Object.assign({}, prevState)
+      const newState = { ...prevState }
       delete newState[handler]
       return newState
     })
   }, [setSubmitHandlers])
 
   const addValidationHandler = useCallback((handler) => {
-    setValidationHandlers((prevState) => Object.assign({}, prevState, handler))
+    setValidationHandlers((prevState) => ({ ...prevState, ...handler }))
   }, [setValidationHandlers])
 
   const removeValidationHandler = useCallback((handler) => {
     setValidationHandlers((prevState) => {
-      const newState = Object.assign({}, prevState)
+      const newState = { ...prevState }
       delete newState[handler]
       return newState
     })
   }, [setValidationHandlers])
 
-  const addFormValues = useCallback((values) => {
-    setFormValues((prevState) => Object.assign({}, prevState, values))
+  const addFormValues = useCallback((formName, values) => {
+    setFormValues((prevState) => ({ ...prevState, ...values }))
+    setFormNameValues((prevState) => ({ ...prevState, [formName]: values }))
   }, [setFormValues])
 
+  // todo: I don't think this was ever working correctly
   const removeFormValues = useCallback((formName) => {
     setFormValues((prevState) => {
-      const newState = Object.assign({}, prevState)
+      const newState = { ...prevState }
       delete newState[formName]
       return newState
     })
@@ -65,6 +72,7 @@ function FormContextWrapper ({
     <FormValuesContext.Provider
       value={{
         formValues,
+        formNameValues,
         addFormValues,
         removeFormValues,
       }}
@@ -96,6 +104,7 @@ FormContextWrapper.propTypes = {
   initialFormValues: PropTypes.object,
   initialSubmitHandlers: PropTypes.objectOf(PropTypes.func),
   initialValidationHandlers: PropTypes.objectOf(PropTypes.func),
+  initialFormNameValues: PropTypes.objectOf(PropTypes.object)
 }
 
 FormContextWrapper.defaultProps = {
@@ -103,6 +112,7 @@ FormContextWrapper.defaultProps = {
   initialFormValues: {},
   initialSubmitHandlers: {},
   initialValidationHandlers: {},
+  initialFormNameValues: {},
 }
 
 export default FormContextWrapper
