@@ -13,17 +13,20 @@ import { FormSubmitContext, FormValuesContext, FormValidationContext } from './f
   will not be guaranteed to occur during the `submit` execution frame.
   A static array holding those callbacks is necessary to capture the Promises.
 */
-const customSubmitHandlers = []
+// const customSubmitHandlers = []
+let customSubmitHandlers = {}
 
 /*
   Internal helper function, you should _not_ need to use this directly in your form.
  */
-function addCustomSubmitHandlerResult (handlerReturnValue) {
-  customSubmitHandlers.push(Promise.resolve(handlerReturnValue))
+function addCustomSubmitHandlerResult (name, handlerReturnValue) {
+  // customSubmitHandlers.push(Promise.resolve(handlerReturnValue))
+  customSubmitHandlers[name] = Promise.resolve(handlerReturnValue)
 }
 
 function clearCustomSubmitHandlers () {
-  customSubmitHandlers.length = 0
+  // customSubmitHandlers.length = 0
+  customSubmitHandlers = {}
 }
 
 function flattenErrors (current) {
@@ -37,23 +40,39 @@ function useFormikSubmit ({ onSubmit, onError }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { submitHandlers } = useContext(FormSubmitContext)
   const { validationHandlers } = useContext(FormValidationContext)
-  const { formValues, formNameValues, addFormValues } = useContext(FormValuesContext)
+  const { formValues, formNameValuesRef, addFormValues } = useContext(FormValuesContext)
 
   useEffect(() => {
     if (isSubmitting && formValues) {
-      onSubmit(formValues, formNameValues)
+      onSubmit(formValues, formNameValuesRef.current)
       setIsSubmitting(false)
     }
-  }, [isSubmitting, formValues, formNameValues, onSubmit])
+  }, [isSubmitting, formValues, formNameValuesRef, onSubmit])
 
   async function submit () {
     // submitForm does not reject if invalid per docs // todo: look at this, still don't think it rejects
-    // run all submit handlers
+    // run all submit handleraddFormValuess
     await Promise.all(Object.values(submitHandlers).map(handler => handler()))
 
     // todo: this would require extra work for the name
-    const customResults = await Promise.all(customSubmitHandlers)
-    customResults.forEach(result => result && addFormValues('tmp', result))
+    // Object.keys(customSubmitHandlers).reduce((carry, current) => {
+    //  return
+    // })
+
+    const foo = await Promise.all(
+      Object.entries(customSubmitHandlers)
+        .map(([formName, customHandler]) => {
+          return new Promise((resolve) => {
+            customHandler
+              .then((data) => resolve([formName, data]))
+          })
+        })
+    )
+
+    foo.forEach(result => result[1] && addFormValues(result[0], result[1]))
+
+    // const customResults = await Promise.all(customSubmitHandlers)
+    // customResults.forEach(result => result && addFormValues(result))
 
     // run all validations and flatten error object
     const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))

@@ -33,9 +33,11 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
   return children
 }
 
+const MemoizedFormWrapper = React.memo(FormWrapper)
+
 function FormikWrapper ({ children, name, render, ...props }) {
   return (
-    <FormWrapper
+    <MemoizedFormWrapper
       values={props.values}
       name={name}
       submitForm={props.submitForm}
@@ -46,9 +48,11 @@ function FormikWrapper ({ children, name, render, ...props }) {
           ? children(props)
           : children
       }
-    </FormWrapper>
+    </MemoizedFormWrapper>
   )
 }
+
+const MemoizedFormikWrapper = React.memo(FormikWrapper)
 
 FormikWrapper.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
@@ -93,10 +97,10 @@ function EnhancedFormik ({
       validateOnChange,
       handleSubmit: (values, formikBag) => {
         if (typeof handleSubmit === 'function') {
-          addCustomSubmitHandlerResult(handleSubmit(values, formikBag))
+          addCustomSubmitHandlerResult(name, handleSubmit(values, formikBag))
         }
       },
-    })(FormikWrapper)
+    })(MemoizedFormikWrapper)
     setIsReady(true)
     setEnhancedComponent(() => EnhancedFormikComponent)
     // we only ever want this to be created once per mount of a 'formik' form

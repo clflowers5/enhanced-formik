@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import { Form, Field, ErrorMessage } from 'formik'
+import { Form, FastField as Field, ErrorMessage } from 'formik'
 import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import * as yup from 'yup'
@@ -64,11 +64,11 @@ function ExampleForm () {
 }
 
 function MyValues () {
-  const { formNameValues } = React.useContext(FormValuesContext)
+  const { formNameValuesRef } = React.useContext(FormValuesContext)
   return (
     <div>
       <FormValues />
-      <FormValues name='Form Name Values' values={formNameValues} />
+      <FormValues name='Form Name Values' values={formNameValuesRef.current} />
     </div>
   )
 }
@@ -85,8 +85,8 @@ function FormContainerA () {
   // example of independent validation/submitting while still working in bigger picture
   const submitRef = React.useRef()
 
-  const { formNameValues } = React.useContext(FormValuesContext)
-  const initialValues = formNameValues['form_a']
+  const { formNameValuesRef } = React.useContext(FormValuesContext)
+  const initialValues = formNameValuesRef.current['form_a']
   return (
     <div>
       <EnhancedFormik
@@ -136,8 +136,8 @@ function FormContainerA () {
 // 'submitForm' above also triggers example_form's submit - this shouldn't happen
 
 function FormContainerB () {
-  const { formNameValues } = React.useContext(FormValuesContext)
-  const initialValues = formNameValues['form_b']
+  const { formNameValuesRef } = React.useContext(FormValuesContext)
+  const initialValues = formNameValuesRef.current['form_b']
 
   return (
     <div>

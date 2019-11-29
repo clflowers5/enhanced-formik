@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -26,9 +26,7 @@ function FormContextWrapper ({
   const [submitHandlers, setSubmitHandlers] = useState(initialSubmitHandlers)
   const [validationHandlers, setValidationHandlers] = useState(initialValidationHandlers)
   const [formValues, setFormValues] = useState(initialFormValues)
-  const [formNameValues, setFormNameValues] = useState(initialFormNameValues)
-
-  console.log('rerendering wrapper')
+  const formNameValuesRef = useRef(initialFormNameValues)
 
   const addSubmitHandler = useCallback((handler) => {
     setSubmitHandlers((prevState) => ({ ...prevState, ...handler }))
@@ -56,7 +54,8 @@ function FormContextWrapper ({
 
   const addFormValues = useCallback((formName, values) => {
     setFormValues((prevState) => ({ ...prevState, ...values }))
-    setFormNameValues((prevState) => ({ ...prevState, [formName]: values }))
+    const previousFormValues = formNameValuesRef.current[formName] || {}
+    formNameValuesRef.current = { ...formNameValuesRef.current, [formName]: { ...previousFormValues, ...values } }
   }, [setFormValues])
 
   // todo: I don't think this was ever working correctly
@@ -72,7 +71,7 @@ function FormContextWrapper ({
     <FormValuesContext.Provider
       value={{
         formValues,
-        formNameValues,
+        formNameValuesRef,
         addFormValues,
         removeFormValues,
       }}
@@ -100,7 +99,6 @@ function FormContextWrapper ({
 
 FormContextWrapper.propTypes = {
   children: PropTypes.node.isRequired,
-  initialCustomSubmitHandlers: PropTypes.objectOf(PropTypes.func),
   initialFormValues: PropTypes.object,
   initialSubmitHandlers: PropTypes.objectOf(PropTypes.func),
   initialValidationHandlers: PropTypes.objectOf(PropTypes.func),
@@ -108,7 +106,6 @@ FormContextWrapper.propTypes = {
 }
 
 FormContextWrapper.defaultProps = {
-  initialCustomSubmitHandlers: {},
   initialFormValues: {},
   initialSubmitHandlers: {},
   initialValidationHandlers: {},

@@ -131,7 +131,7 @@ describe('useFormikSubmit', () => {
     act(async () => {
       await result.current()
       rerender()
-      expect(mockOnSubmit).toHaveBeenCalledWith(mockFormValues)
+      expect(mockOnSubmit).toHaveBeenCalledWith(mockFormValues, {})
       expect(mockOnError).not.toHaveBeenCalled()
       done()
     })
@@ -157,6 +157,7 @@ describe('useFormikSubmit', () => {
     const wrapper = ({ children }) => (
       <FormContextWrapper
         initialFormValues={mockFormValues}
+        initialFormNameValues={{ customFormName: mockFormValues }}
         initialSubmitHandlers={{ myForm: mockSubmitHandler }}
         initialValidationHandlers={{ myForm: mockValidationHandler }}
       >
@@ -169,7 +170,7 @@ describe('useFormikSubmit', () => {
       onError: mockOnError,
     }), { wrapper })
 
-    addCustomSubmitHandlerResult(new Promise(resolve =>
+    addCustomSubmitHandlerResult('customFormName', new Promise(resolve =>
       setTimeout(() => {
         mockCustomSubmitHandler()
         resolve({ customKey: 'Frosted-Flakes!' })
@@ -185,6 +186,11 @@ describe('useFormikSubmit', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         ...mockFormValues,
         customKey: 'Frosted-Flakes!',
+      }, {
+        customFormName: {
+          ...mockFormValues,
+          customKey: 'Frosted-Flakes!',
+        }
       })
       expect(mockCustomSubmitHandler).toHaveBeenCalledTimes(1)
       expect(mockOnError).not.toHaveBeenCalled()
