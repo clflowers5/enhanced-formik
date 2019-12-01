@@ -55,16 +55,13 @@ function FormContextWrapper ({
 
   const addFormValues = useCallback((formName, values) => {
     setFormValues((prevState) => ({ ...prevState, ...values }))
-    // formValues.current = { ...formValues.current, ...values }
     const previousFormValues = formNameValuesRef.current[formName] || {}
-    // formNameValuesRef.current = { ...formNameValuesRef.current, [formName]: { ...previousFormValues, ...values } }
     if (formNameValuesRef.current[formName]) {
       Object.assign(formNameValuesRef.current[formName], previousFormValues, values)
     } else {
       formNameValuesRef.current[formName] = {}
     }
   }, [])
-  // }, [setFormValues])
 
   // todo: I don't think this was ever working correctly
   const removeFormValues = useCallback((formName) => {

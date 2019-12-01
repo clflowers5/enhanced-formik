@@ -43,23 +43,18 @@ function useFormikSubmit ({ onSubmit, onError }) {
   const { formValues, formNameValuesRef, addFormValues } = useContext(FormValuesContext)
 
   useEffect(() => {
-    if (isSubmitting && formValues.current) {
-      onSubmit(formValues.current, formNameValuesRef.current)
+    if (isSubmitting && formValues) {
+      onSubmit(formValues, formNameValuesRef.current)
       setIsSubmitting(false)
     }
   }, [isSubmitting, formValues, formNameValuesRef, onSubmit])
 
   async function submit () {
     // submitForm does not reject if invalid per docs // todo: look at this, still don't think it rejects
-    // run all submit handleraddFormValuess
+    // run all submit handlers
     await Promise.all(Object.values(submitHandlers).map(handler => handler()))
 
-    // todo: this would require extra work for the name
-    // Object.keys(customSubmitHandlers).reduce((carry, current) => {
-    //  return
-    // })
-
-    const foo = await Promise.all(
+    const customResults = await Promise.all(
       Object.entries(customSubmitHandlers)
         .map(([formName, customHandler]) => {
           return new Promise((resolve) => {
@@ -69,10 +64,7 @@ function useFormikSubmit ({ onSubmit, onError }) {
         })
     )
 
-    foo.forEach(result => result[1] && addFormValues(result[0], result[1]))
-
-    // const customResults = await Promise.all(customSubmitHandlers)
-    // customResults.forEach(result => result && addFormValues(result))
+    customResults.forEach(result => result[1] && addFormValues(result[0], result[1]))
 
     // run all validations and flatten error object
     const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))

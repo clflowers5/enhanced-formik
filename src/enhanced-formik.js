@@ -41,7 +41,6 @@ const MemoizedFormWrapper = React.memo(FormWrapper, (prevProps, nextProps) => {
 // const MemoizedFormWrapper = React.memo(FormWrapper)
 
 function FormikWrapper ({ children, name, render, ...props }) {
-  console.log('rendering formik wrapper', name)
   return (
     <MemoizedFormWrapper
       values={props.values}
@@ -94,18 +93,20 @@ function EnhancedFormik ({
 }) {
   const [isReady, setIsReady] = useState(false)
   const [EnhancedComponent, setEnhancedComponent] = useState(null)
+  const mapPropsToValues = React.useCallback(() => initialValues, [])
+  const handleFormikSubmit = React.useCallback((values, formikBag) => {
+    if (typeof handleSubmit === 'function') {
+      addCustomSubmitHandlerResult(name, handleSubmit(values, formikBag))
+    }
+  }, [])
 
   useLayoutEffect(() => {
     const EnhancedFormikComponent = withFormik({
-      mapPropsToValues: () => initialValues,
+      mapPropsToValues,
       validationSchema,
       validateOnBlur,
       validateOnChange,
-      handleSubmit: (values, formikBag) => {
-        if (typeof handleSubmit === 'function') {
-          addCustomSubmitHandlerResult(name, handleSubmit(values, formikBag))
-        }
-      },
+      handleSubmit: handleFormikSubmit,
     })(MemoizedFormikWrapper)
     console.log('creating memoized formik', name)
     setIsReady(true)
@@ -113,8 +114,6 @@ function EnhancedFormik ({
     // we only ever want this to be created once per mount of a 'formik' form
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log('rendering enhanced formik', name, isReady)
 
   return isReady ? <EnhancedComponent name={name} {...rest} /> : null
 }
