@@ -43,8 +43,8 @@ function useFormikSubmit ({ onSubmit, onError }) {
   const { formValues, formNameValuesRef, addFormValues } = useContext(FormValuesContext)
 
   useEffect(() => {
-    if (isSubmitting && formValues) {
-      onSubmit(formValues, formNameValuesRef.current)
+    if (isSubmitting && formValues.current) {
+      onSubmit(formValues.current, formNameValuesRef.current)
       setIsSubmitting(false)
     }
   }, [isSubmitting, formValues, formNameValuesRef, onSubmit])

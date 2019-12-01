@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Form, FastField as Field, ErrorMessage } from 'formik'
 import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
@@ -87,16 +87,13 @@ function FormContainerA () {
 
   const { formNameValuesRef } = React.useContext(FormValuesContext)
   const initialValues = formNameValuesRef.current['form_a']
+  const defaultValues = useMemo(() => ({ obj: { foo: '', bar: '' } }), [])
+
   return (
     <div>
       <EnhancedFormik
         name='form_a'
-        initialValues={initialValues || {
-          obj: {
-            foo: '',
-            bar: '',
-          },
-        }}
+        initialValues={initialValues || defaultValues}
         validationSchema={yup.object().shape({
           obj: yup.object({
             foo: yup.string().required('i need').min(5, 'foo not longer than 5').transform(transformEmptyValues).nullable(),
@@ -132,21 +129,23 @@ function FormContainerA () {
   )
 }
 
+function FormA({}) {
+
+}
+
 // todo: potential stopper - verify previous version
 // 'submitForm' above also triggers example_form's submit - this shouldn't happen
 
 function FormContainerB () {
   const { formNameValuesRef } = React.useContext(FormValuesContext)
   const initialValues = formNameValuesRef.current['form_b']
+  const defaultValues = useMemo(() => ({ foo2: '', bar2: '' }), [])
 
   return (
     <div>
       <EnhancedFormik
         name='form_b'
-        initialValues={initialValues || {
-          foo2: '',
-          bar2: '',
-        }}
+        initialValues={initialValues || defaultValues}
         validationSchema={yup.object().shape({
           foo2: yup.string().min(5, 'need not longer than 5'),
           bar2: yup.string().max(5, 'need not more than 5'),

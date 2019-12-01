@@ -29,3 +29,10 @@ const submitHandler = useFormikSubmit({ onSubmit, onError })
 
 If all else fails, look at the `src/stories/index.js` entry to see
 how the public api of this thing works.
+
+
+
+
+// todo:
+switching values to a ref improves performance by around 60%, but 
+FormValues stops working...

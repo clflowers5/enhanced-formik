@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { withFormik } from 'formik'
+import { isEqual } from 'lodash'
 
 import {
   FormSubmitContext,
@@ -33,9 +34,14 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
   return children
 }
 
-const MemoizedFormWrapper = React.memo(FormWrapper)
+const MemoizedFormWrapper = React.memo(FormWrapper, (prevProps, nextProps) => {
+  return isEqual(prevProps.values, nextProps.values)
+})
+
+// const MemoizedFormWrapper = React.memo(FormWrapper)
 
 function FormikWrapper ({ children, name, render, ...props }) {
+  console.log('rendering formik wrapper', name)
   return (
     <MemoizedFormWrapper
       values={props.values}
@@ -101,11 +107,14 @@ function EnhancedFormik ({
         }
       },
     })(MemoizedFormikWrapper)
+    console.log('creating memoized formik', name)
     setIsReady(true)
     setEnhancedComponent(() => EnhancedFormikComponent)
     // we only ever want this to be created once per mount of a 'formik' form
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  console.log('rendering enhanced formik', name, isReady)
 
   return isReady ? <EnhancedComponent name={name} {...rest} /> : null
 }
