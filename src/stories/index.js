@@ -91,31 +91,11 @@ function FormContainerA () {
 
   return (
     <div>
-      <EnhancedFormik
-        name='form_a'
-        initialValues={initialValues || defaultValues}
-        validationSchema={yup.object().shape({
-          obj: yup.object({
-            foo: yup.string().required('i need').min(5, 'foo not longer than 5').transform(transformEmptyValues).nullable(),
-            bar: yup.string().required('u need').max(5, 'need not more than 5').transform(transformEmptyValues).nullable(),
-          }),
-        })}
-        validateOnBlur={false}
-        validateOnChange={false}
-        handleSubmit={action('handleSubmit: Running FormContainerA custom submit. Values and Bag:')}
-      >
-        {({ submitForm }) => {
-          submitRef.current = submitForm
-          return (
-            <React.Fragment>
-              <Field type='text' name='obj.foo' />
-              <ErrorMessage name='obj.foo' />
-              <Field type='text' name='obj.bar' />
-              <ErrorMessage name='obj.bar' />
-            </React.Fragment>
-          )
-        }}
-      </EnhancedFormik>
+      <FormA
+        initialValues={initialValues}
+        defaultValues={defaultValues}
+        submitRef={submitRef}
+      />
       <button
         type='submit'
         onClick={() => {
@@ -129,9 +109,35 @@ function FormContainerA () {
   )
 }
 
-function FormA({}) {
-
-}
+const FormA = React.memo(({ submitRef, initialValues, defaultValues }) => {
+  return (
+    <EnhancedFormik
+      name='form_a'
+      initialValues={initialValues || defaultValues}
+      validationSchema={yup.object().shape({
+        obj: yup.object({
+          foo: yup.string().required('i need').min(5, 'foo not longer than 5').transform(transformEmptyValues).nullable(),
+          bar: yup.string().required('u need').max(5, 'need not more than 5').transform(transformEmptyValues).nullable(),
+        }),
+      })}
+      validateOnBlur={false}
+      validateOnChange={false}
+      handleSubmit={action('handleSubmit: Running FormContainerA custom submit. Values and Bag:')}
+    >
+      {({ submitForm }) => {
+        submitRef.current = submitForm
+        return (
+          <React.Fragment>
+            <Field type='text' name='obj.foo' />
+            <ErrorMessage name='obj.foo' />
+            <Field type='text' name='obj.bar' />
+            <ErrorMessage name='obj.bar' />
+          </React.Fragment>
+        )
+      }}
+    </EnhancedFormik>
+  )
+})
 
 // todo: potential stopper - verify previous version
 // 'submitForm' above also triggers example_form's submit - this shouldn't happen
@@ -143,25 +149,34 @@ function FormContainerB () {
 
   return (
     <div>
-      <EnhancedFormik
-        name='form_b'
-        initialValues={initialValues || defaultValues}
-        validationSchema={yup.object().shape({
-          foo2: yup.string().min(5, 'need not longer than 5'),
-          bar2: yup.string().max(5, 'need not more than 5'),
-        })}
-        validateOnBlur={false}
-        validateOnChange={false}
-      >
-        {() => (
-          <>
-            <Field type='text' name='foo2' />
-            <ErrorMessage name='foo2' />
-            <Field type='text' name='bar2' />
-            <ErrorMessage name='bar2' />
-          </>
-        )}
-      </EnhancedFormik>
+      <FormB
+        initialValues={initialValues}
+        defaultValues={defaultValues}
+      />
     </div>
   )
 }
+
+const FormB = React.memo(({ initialValues, defaultValues }) => {
+  return (
+    <EnhancedFormik
+      name='form_b'
+      initialValues={initialValues || defaultValues}
+      validationSchema={yup.object().shape({
+        foo2: yup.string().min(5, 'need not longer than 5'),
+        bar2: yup.string().max(5, 'need not more than 5'),
+      })}
+      validateOnBlur={false}
+      validateOnChange={false}
+    >
+      {() => (
+        <>
+          <Field type='text' name='foo2' />
+          <ErrorMessage name='foo2' />
+          <Field type='text' name='bar2' />
+          <ErrorMessage name='bar2' />
+        </>
+      )}
+    </EnhancedFormik>
+  )
+})

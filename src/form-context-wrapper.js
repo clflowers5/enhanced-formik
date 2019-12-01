@@ -25,8 +25,8 @@ function FormContextWrapper ({
 }) {
   const [submitHandlers, setSubmitHandlers] = useState(initialSubmitHandlers)
   const [validationHandlers, setValidationHandlers] = useState(initialValidationHandlers)
-  // const [formValues, setFormValues] = useState(initialFormValues)
-  const formValues = useRef(initialFormValues)
+  const [formValues, setFormValues] = useState(initialFormValues)
+  // const formValues = useRef(initialFormValues)
   const formNameValuesRef = useRef(initialFormNameValues)
 
   const addSubmitHandler = useCallback((handler) => {
@@ -54,10 +54,15 @@ function FormContextWrapper ({
   }, [setValidationHandlers])
 
   const addFormValues = useCallback((formName, values) => {
-    // setFormValues((prevState) => ({ ...prevState, ...values }))
-    formValues.current = { ...formValues.current, ...values }
+    setFormValues((prevState) => ({ ...prevState, ...values }))
+    // formValues.current = { ...formValues.current, ...values }
     const previousFormValues = formNameValuesRef.current[formName] || {}
-    formNameValuesRef.current = { ...formNameValuesRef.current, [formName]: { ...previousFormValues, ...values } }
+    // formNameValuesRef.current = { ...formNameValuesRef.current, [formName]: { ...previousFormValues, ...values } }
+    if (formNameValuesRef.current[formName]) {
+      Object.assign(formNameValuesRef.current[formName], previousFormValues, values)
+    } else {
+      formNameValuesRef.current[formName] = {}
+    }
   }, [])
   // }, [setFormValues])
 
