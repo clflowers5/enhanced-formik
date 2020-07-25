@@ -12,13 +12,10 @@
   },
   "scripts": {
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject",
     "storybook": "start-storybook",
     "build-storybook": "build-storybook -s public"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -33,11 +30,15 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-react": "^7.10.4",
     "@storybook/addon-actions": "^5.3.19",
     "@storybook/addon-links": "^5.3.19",
     "@storybook/addons": "^5.3.19",
     "@storybook/react": "^5.3.19",
+    "@testing-library/react-hooks": "^3.4.1",
     "babel-eslint": "^10.0.2",
+    "babel-jest": "^26.1.0",
     "eslint": "^6.1.0",
     "eslint-config-standard": "^13.0.1",
     "eslint-config-standard-react": "^8.0.0",
@@ -45,6 +46,8 @@
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
     "eslint-plugin-standard": "^4.0.0",
+    "jest": "^26.1.0",
+    "react-test-renderer": "^16.13.1",
     "standard": "^13.1.0"
   },
   "standard": {
