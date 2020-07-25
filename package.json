@@ -14,7 +14,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 9009 -s public",
+    "storybook": "start-storybook",
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
@@ -33,10 +33,10 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^5.1.10",
-    "@storybook/addon-links": "^5.1.10",
-    "@storybook/addons": "^5.1.10",
-    "@storybook/react": "^5.1.10",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/react": "^5.3.19",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.1.0",
     "eslint-config-standard": "^13.0.1",

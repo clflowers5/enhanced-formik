@@ -6,6 +6,7 @@ TLDR, Formik is awesome, but it's also nice to have
 'mini forms' that can handle their own validations
 and submit handling independently of the page Formik.
 
+// todo: update this documentation...
 Enhanced Formik exposes 3 exports:
 
 `FormContextWrapper` Component - Wrap your entire form with 

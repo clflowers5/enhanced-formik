@@ -19,7 +19,8 @@
   },
   "rules": {
     "react/jsx-curly-spacing": 0,
-    "comma-dangle": 0
+    "comma-dangle": 0,
+    "space-before-function-paren": 0,
 
   },
   "parser": "babel-eslint"
