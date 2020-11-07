@@ -1,7 +1,7 @@
-import { useEffect, useState, useContext } from 'react'
-import { isObject, flatMap, isFunction } from 'lodash'
+import { useContext, useEffect, useState } from 'react'
+import { flatMap, isFunction, isObject } from 'lodash'
 
-import { FormSubmitContext, FormValuesContext, FormValidationContext } from './form-contexts'
+import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
 
 /*
     Formik doesn't support awaiting `handleSubmit` by default.
@@ -58,7 +58,7 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
     }
   }, [errorMessageToFocus])
 
-  async function submit() {
+  async function submit () {
     // submitForm does not reject if invalid per docs
     // run all submit handlers
     await Promise.all(Object.values(submitHandlers).map(handler => handler()))
@@ -101,5 +101,5 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
 
 export {
   useFormikSubmit as default,
-  addCustomSubmitHandlerResult,
+  addCustomSubmitHandlerResult
 }

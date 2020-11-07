@@ -1,4 +1,4 @@
-import { Form, Field } from 'formik'
+import { FastField, Field, Form, FieldArray } from 'formik'
 
 import FormContextWrapper from './form-context-wrapper'
 import DebugFormValues from './debug-form-values'
@@ -12,8 +12,10 @@ export {
   FormValuesContext,
   DebugFormValues,
   EnhancedFormik,
+  FastField,
   Field,
+  FieldArray,
   Form,
   SubmitButton,
-  useFormikSubmit,
+  useFormikSubmit
 }
