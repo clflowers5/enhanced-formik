@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {
   FormSubmitContext,
   FormValidationContext,
-  FormValuesContext,
+  FormValuesContext
 } from './form-contexts'
 
 /**
@@ -19,7 +19,7 @@ function FormContextWrapper ({
   children,
   initialFormValues,
   initialSubmitHandlers,
-  initialValidationHandlers,
+  initialValidationHandlers
 }) {
   const [submitHandlers, setSubmitHandlers] = useState(initialSubmitHandlers)
   const [validationHandlers, setValidationHandlers] = useState(initialValidationHandlers)
@@ -49,8 +49,11 @@ function FormContextWrapper ({
     })
   }, [setValidationHandlers])
 
-  const addFormValues = useCallback((values) => {
-    setFormValues((prevState) => Object.assign({}, prevState, values))
+  const addFormValues = useCallback((values, formName) => {
+    setFormValues((prevState) => {
+      const newInnerForm = { ...prevState[formName], ...values }
+      return Object.assign({}, prevState, { [formName]: newInnerForm })
+    })
   }, [setFormValues])
 
   const removeFormValues = useCallback((formName) => {
@@ -67,21 +70,21 @@ function FormContextWrapper ({
       value={{
         formValues,
         addFormValues,
-        removeFormValues,
+        removeFormValues
       }}
     >
       <FormValidationContext.Provider
         value={{
           validationHandlers,
           addValidationHandler,
-          removeValidationHandler,
+          removeValidationHandler
         }}
       >
         <FormSubmitContext.Provider
           value={{
             submitHandlers,
             addSubmitHandler,
-            removeSubmitHandler,
+            removeSubmitHandler
           }}
         >
           {children}
@@ -96,14 +99,14 @@ FormContextWrapper.propTypes = {
   initialCustomSubmitHandlers: PropTypes.objectOf(PropTypes.func),
   initialFormValues: PropTypes.object,
   initialSubmitHandlers: PropTypes.objectOf(PropTypes.func),
-  initialValidationHandlers: PropTypes.objectOf(PropTypes.func),
+  initialValidationHandlers: PropTypes.objectOf(PropTypes.func)
 }
 
 FormContextWrapper.defaultProps = {
   initialCustomSubmitHandlers: {},
   initialFormValues: {},
   initialSubmitHandlers: {},
-  initialValidationHandlers: {},
+  initialValidationHandlers: {}
 }
 
 export default FormContextWrapper

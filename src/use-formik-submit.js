@@ -16,8 +16,8 @@ const customSubmitHandlers = []
 /*
     Internal helper function, you should _not_ need to use this directly in your form.
  */
-function addCustomSubmitHandlerResult (handlerReturnValue) {
-  customSubmitHandlers.push(Promise.resolve(handlerReturnValue))
+function addCustomSubmitHandlerResult (handlerReturnValue, formName) {
+  customSubmitHandlers.push({ value: Promise.resolve(handlerReturnValue), formName })
 }
 
 function clearCustomSubmitHandlers () {
@@ -65,14 +65,17 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
 
     // run custom submit handlers
     let customResults
+    let formNames
     try {
-      customResults = await Promise.all(customSubmitHandlers)
+      const callbacks = customSubmitHandlers.map(customSubmit => customSubmit.value)
+      formNames = customSubmitHandlers.map(customSubmit => customSubmit.formName)
+      customResults = await Promise.all(callbacks)
     } catch (e) {
       // if errors occur during custom submit phase, clear out and abort submit
       clearCustomSubmitHandlers()
       return
     }
-    customResults.forEach(result => result && addFormValues(result))
+    customResults.forEach((result, index) => result && addFormValues(result, formNames[index]))
 
     // run all validations and flatten error object
     const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))

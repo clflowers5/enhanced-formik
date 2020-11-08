@@ -26,6 +26,10 @@ export function basicUsage () {
     ]
   }
 
+  const initialValues4 = {
+    what: 'what'
+  }
+
   return (
     <div>
       <h1>Forms</h1>
@@ -75,13 +79,28 @@ export function basicUsage () {
           )}
         </EnhancedFormik>
 
+        <h2>Form 4... Custom Submit</h2>
+        <EnhancedFormik
+          name='form4'
+          initialValues={initialValues4}
+          handleSubmit={(...props) => {
+            if (props[0].what === 'what') {
+              throw new Error('What cannot be what')
+            }
+          }}
+        >
+          <div>
+            <Field name='what' />
+          </div>
+        </EnhancedFormik>
+
         <SubmitButton
           onSubmit={(values) => {
             alert(JSON.stringify(values))
           }}
           style={{ marginTop: '3rem' }}
         >
-            Submit Form
+          Submit Form
         </SubmitButton>
 
         <DebugFormValues />

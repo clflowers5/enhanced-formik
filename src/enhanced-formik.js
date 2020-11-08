@@ -5,7 +5,7 @@ import { withFormik } from 'formik'
 import {
   FormSubmitContext,
   FormValidationContext,
-  FormValuesContext,
+  FormValuesContext
 } from './form-contexts'
 import { addCustomSubmitHandlerResult } from './use-formik-submit'
 
@@ -15,7 +15,7 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
   const { addFormValues, removeFormValues } = useContext(FormValuesContext)
 
   useEffect(() => {
-    addFormValues(values)
+    addFormValues(values, name)
     return () => {
       removeFormValues(name)
     }
@@ -58,7 +58,7 @@ FormikWrapper.propTypes = {
   name: PropTypes.string.isRequired,
   submitForm: PropTypes.func.isRequired,
   validateForm: PropTypes.func.isRequired,
-  values: PropTypes.object,
+  values: PropTypes.object
 }
 
 /**
@@ -98,9 +98,9 @@ function EnhancedFormik ({
       validateOnChange,
       handleSubmit: (values, formikBag) => {
         if (typeof handleSubmit === 'function') {
-          addCustomSubmitHandlerResult(handleSubmit(values, formikBag))
+          addCustomSubmitHandlerResult(handleSubmit(values, formikBag), name)
         }
-      },
+      }
     })(FormikWrapper)
     setIsReady(true)
     setEnhancedComponent(() => EnhancedFormikComponent)
@@ -119,7 +119,7 @@ EnhancedFormik.propTypes = {
   validationSchema: PropTypes.object,
   validateOnBlur: PropTypes.bool,
   validateOnChange: PropTypes.bool,
-  handleSubmit: PropTypes.func,
+  handleSubmit: PropTypes.func
 }
 
 export default EnhancedFormik
