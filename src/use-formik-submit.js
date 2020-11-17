@@ -1,5 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { flatMap, isFunction, isObject } from 'lodash'
+import { useContextSelector } from 'use-context-selector'
 
 import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
 
@@ -34,9 +35,9 @@ function flattenErrors (current) {
 function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
   const [errorMessageToFocus, setErrorMessageToFocus] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { submitHandlers } = useContext(FormSubmitContext)
-  const { validationHandlers } = useContext(FormValidationContext)
-  const { formValues, addFormValues } = useContext(FormValuesContext)
+  const submitHandlers = useContextSelector(FormSubmitContext, c => c.submitHandlers)
+  const validationHandlers = useContextSelector(FormValidationContext, c => c.validationHandlers)
+  const [formValues, addFormValues] = useContextSelector(FormValuesContext, c => [c.formValues, c.addFormValues])
 
   useEffect(() => {
     if (isSubmitting && formValues) {

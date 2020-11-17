@@ -52,15 +52,14 @@ function FormContextWrapper ({
   const addFormValues = useCallback((values, formName) => {
     setFormValues((prevState) => {
       const newInnerForm = { ...prevState[formName], ...values }
-      return Object.assign({}, prevState, { [formName]: newInnerForm })
+      return Object.assign(prevState, { [formName]: newInnerForm })
     })
   }, [setFormValues])
 
   const removeFormValues = useCallback((formName) => {
     setFormValues((prevState) => {
-      const newState = Object.assign({}, prevState)
-      delete newState[formName]
-      return newState
+      delete prevState[formName]
+      return prevState
     })
   }, [setFormValues])
 
