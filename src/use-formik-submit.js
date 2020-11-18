@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { flatMap, isFunction, isObject } from 'lodash'
-import { useContextSelector } from 'use-context-selector'
 
 import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
 
@@ -35,9 +34,9 @@ function flattenErrors (current) {
 function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
   const [errorMessageToFocus, setErrorMessageToFocus] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const submitHandlers = useContextSelector(FormSubmitContext, c => c.submitHandlers)
-  const validationHandlers = useContextSelector(FormValidationContext, c => c.validationHandlers)
-  const [formValues, addFormValues] = useContextSelector(FormValuesContext, c => [c.formValues, c.addFormValues])
+  const submitHandlers = useContext(FormSubmitContext)
+  const validationHandlers = useContext(FormValidationContext)
+  const formValues = useContext(FormValuesContext)
 
   useEffect(() => {
     if (isSubmitting && formValues) {
@@ -76,7 +75,15 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
       clearCustomSubmitHandlers()
       return
     }
-    customResults.forEach((result, index) => result && addFormValues(result, formNames[index]))
+    customResults.forEach((result, index) => {
+      if (result) {
+        const formName = formNames[index]
+        formValues[formName] = {
+          ...formValues[formName],
+          ...result
+        }
+      }
+    })
 
     // run all validations and flatten error object
     const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))

@@ -1,22 +1,8 @@
-import { createContext } from 'use-context-selector'
+import { createContext } from 'react'
 
-const FormValuesContext = createContext({
-  formValues: {},
-  addFormValues: () => {},
-  removeFormValues: () => {}
-})
-
-const FormSubmitContext = createContext({
-  submitHandlers: {},
-  addSubmitHandler: () => {},
-  removeSubmitHandler: () => {}
-})
-
-const FormValidationContext = createContext({
-  validationHandlers: {},
-  addValidationHandler: () => {},
-  removeValidationHandler: () => {}
-})
+const FormValuesContext = createContext({})
+const FormSubmitContext = createContext({})
+const FormValidationContext = createContext({})
 
 export {
   FormValuesContext,

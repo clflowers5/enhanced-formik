@@ -1,7 +1,6 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { withFormik } from 'formik'
-import { useContextSelector } from 'use-context-selector'
 
 import {
   FormSubmitContext,
@@ -11,25 +10,25 @@ import {
 import { addCustomSubmitHandlerResult } from './use-formik-submit'
 
 function FormWrapper ({ values, name, submitForm, validateForm, children }) {
-  const [addSubmitHandler, removeSubmitHandler] = useContextSelector(FormSubmitContext, c => [c.addSubmitHandler, c.removeSubmitHandler])
-  const [addValidationHandler, removeValidationHandler] = useContextSelector(FormValidationContext, c => [c.addValidationHandler, c.removeValidationHandler])
-  const [addFormValues, removeFormValues] = useContextSelector(FormValuesContext, c => [c.addFormValues, c.removeFormValues])
+  const formValues = useContext(FormValuesContext)
+  const submitHandlers = useContext(FormSubmitContext)
+  const validationHandlers = useContext(FormValidationContext)
 
   useEffect(() => {
-    addFormValues(values, name)
+    formValues[name] = values
     return () => {
-      removeFormValues(name)
+      delete formValues[name]
     }
-  }, [name, values, addFormValues, removeFormValues])
+  }, [name, values])
 
   useEffect(() => {
-    addSubmitHandler({ [name]: submitForm })
-    addValidationHandler({ [name]: validateForm })
+    submitHandlers[name] = submitForm
+    validationHandlers[name] = validateForm
     return () => {
-      removeSubmitHandler(name)
-      removeValidationHandler(name)
+      delete submitHandlers[name]
+      delete validationHandlers[name]
     }
-  }, [name, addSubmitHandler, addValidationHandler, submitForm, validateForm, removeSubmitHandler, removeValidationHandler])
+  }, [name, submitForm, validateForm])
 
   return children
 }

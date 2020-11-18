@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react'
+import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
+import { useLocalObservable } from 'mobx-react-lite'
 
 import {
   FormSubmitContext,
@@ -21,71 +22,15 @@ function FormContextWrapper ({
   initialSubmitHandlers,
   initialValidationHandlers
 }) {
-  const [submitHandlers, setSubmitHandlers] = useState(initialSubmitHandlers)
-  const [validationHandlers, setValidationHandlers] = useState(initialValidationHandlers)
-  const [formValues, setFormValues] = useState(initialFormValues)
+  const submitHandlers = useRef(initialSubmitHandlers)
+  const validationHandlers = useRef(initialValidationHandlers)
+  const formValues = useLocalObservable(() => initialFormValues)
 
-  const addSubmitHandler = useCallback((handler) => {
-    setSubmitHandlers((prevState) => Object.assign({}, prevState, handler))
-  }, [setSubmitHandlers])
-
-  const removeSubmitHandler = useCallback((handler) => {
-    setSubmitHandlers((prevState) => {
-      const newState = Object.assign({}, prevState)
-      delete newState[handler]
-      return newState
-    })
-  }, [setSubmitHandlers])
-
-  const addValidationHandler = useCallback((handler) => {
-    setValidationHandlers((prevState) => Object.assign({}, prevState, handler))
-  }, [setValidationHandlers])
-
-  const removeValidationHandler = useCallback((handler) => {
-    setValidationHandlers((prevState) => {
-      const newState = Object.assign({}, prevState)
-      delete newState[handler]
-      return newState
-    })
-  }, [setValidationHandlers])
-
-  const addFormValues = useCallback((values, formName) => {
-    setFormValues((prevState) => {
-      const newInnerForm = { ...prevState[formName], ...values }
-      return Object.assign(prevState, { [formName]: newInnerForm })
-    })
-  }, [setFormValues])
-
-  const removeFormValues = useCallback((formName) => {
-    setFormValues((prevState) => {
-      delete prevState[formName]
-      return prevState
-    })
-  }, [setFormValues])
-
-  // todo: evaluate if condesning contexts is worthwhile
+  // todo: still evaluate if condensing contexts is worthwhile - maybe so with the switch to mobx
   return (
-    <FormValuesContext.Provider
-      value={{
-        formValues,
-        addFormValues,
-        removeFormValues
-      }}
-    >
-      <FormValidationContext.Provider
-        value={{
-          validationHandlers,
-          addValidationHandler,
-          removeValidationHandler
-        }}
-      >
-        <FormSubmitContext.Provider
-          value={{
-            submitHandlers,
-            addSubmitHandler,
-            removeSubmitHandler
-          }}
-        >
+    <FormValuesContext.Provider value={formValues}>
+      <FormValidationContext.Provider value={validationHandlers.current}>
+        <FormSubmitContext.Provider value={submitHandlers.current}>
           {children}
         </FormSubmitContext.Provider>
       </FormValidationContext.Provider>
