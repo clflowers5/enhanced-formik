@@ -17,6 +17,7 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
   useEffect(() => {
     formValues[name] = values
     return () => {
+      // todo: this triggers mobx warnings in tests, need to look into it
       delete formValues[name]
     }
   }, [name, values])

@@ -8,20 +8,19 @@ import { FormValuesContext } from './form-contexts'
 /**
  * Simple output of formatted form values. Useful for dev-time testing and debugging.
  */
-
-const DebugFormValues = observer(({ values, title }) => {
+const DebugFormValues = observer(({ title, values }) => {
   const formValues = useContext(FormValuesContext)
   return (
     <div style={{ marginTop: '2rem' }}>
       <p><b>{title}</b></p>
-      <pre>{JSON.stringify(values || formValues, null, 2)}</pre>
+      <pre data-testid='rtl-debug-form-values'>{JSON.stringify(values || formValues, null, 2)}</pre>
     </div>
   )
 })
 
 DebugFormValues.propTypes = {
-  values: PropTypes.object,
-  title: PropTypes.string
+  title: PropTypes.string,
+  values: PropTypes.object
 }
 
 DebugFormValues.defaultProps = {
