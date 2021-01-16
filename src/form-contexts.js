@@ -1,25 +1,11 @@
-import React from 'react'
+import { createContext } from 'react'
 
-const FormValuesContext = React.createContext({
-  formValues: {},
-  addFormValues: () => {},
-  removeFormValues: () => {},
-})
-
-const FormSubmitContext = React.createContext({
-  submitHandlers: {},
-  addSubmitHandler: () => {},
-  removeSubmitHandler: () => {},
-})
-
-const FormValidationContext = React.createContext({
-  validationHandlers: {},
-  addValidationHandler: () => {},
-  removeValidationHandler: () => {},
-})
+const FormValuesContext = createContext({})
+const FormSubmitContext = createContext({})
+const FormValidationContext = createContext({})
 
 export {
   FormValuesContext,
   FormSubmitContext,
-  FormValidationContext,
+  FormValidationContext
 }

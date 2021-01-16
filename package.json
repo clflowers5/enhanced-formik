@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "formik": "^1.5.8",
+    "mobx": "^6.0.4",
+    "mobx-react-lite": "^3.1.6",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
@@ -36,6 +38,8 @@
     "@storybook/addon-links": "^5.3.19",
     "@storybook/addons": "^5.3.19",
     "@storybook/react": "^5.3.19",
+    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/react": "^11.2.1",
     "@testing-library/react-hooks": "^3.4.1",
     "babel-eslint": "^10.0.2",
     "babel-jest": "^26.1.0",
@@ -44,11 +48,12 @@
     "eslint-config-standard-react": "^8.0.0",
     "eslint-plugin-jest": "^22.15.0",
     "eslint-plugin-react": "^7.14.3",
-    "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-standard": "^4.0.0",
     "jest": "^26.1.0",
     "react-test-renderer": "^16.13.1",
-    "standard": "^13.1.0"
+    "standard": "^13.1.0",
+    "yup": "^0.29.1"
   },
   "standard": {
     "env": [

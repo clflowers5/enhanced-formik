@@ -1,34 +1,32 @@
 import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { withFormik } from 'formik'
+import { runInAction } from 'mobx'
 
-import {
-  FormSubmitContext,
-  FormValidationContext,
-  FormValuesContext,
-} from './form-contexts'
+import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
 import { addCustomSubmitHandlerResult } from './use-formik-submit'
 
 function FormWrapper ({ values, name, submitForm, validateForm, children }) {
-  const { addSubmitHandler, removeSubmitHandler } = useContext(FormSubmitContext)
-  const { addValidationHandler, removeValidationHandler } = useContext(FormValidationContext)
-  const { addFormValues, removeFormValues } = useContext(FormValuesContext)
+  const formValues = useContext(FormValuesContext)
+  const submitHandlers = useContext(FormSubmitContext)
+  const validationHandlers = useContext(FormValidationContext)
 
   useEffect(() => {
-    addFormValues(values)
+    formValues[name] = values
     return () => {
-      removeFormValues(name)
+      // prevents mobx warnings in strict mode
+      runInAction(() => delete formValues[name])
     }
-  }, [name, values, addFormValues, removeFormValues])
+  }, [name, values])
 
   useEffect(() => {
-    addSubmitHandler({ [name]: submitForm })
-    addValidationHandler({ [name]: validateForm })
+    submitHandlers[name] = submitForm
+    validationHandlers[name] = validateForm
     return () => {
-      removeSubmitHandler(name)
-      removeValidationHandler(name)
+      delete submitHandlers[name]
+      delete validationHandlers[name]
     }
-  }, [name, addSubmitHandler, addValidationHandler, submitForm, validateForm, removeSubmitHandler, removeValidationHandler])
+  }, [name, submitForm, validateForm])
 
   return children
 }
@@ -58,7 +56,7 @@ FormikWrapper.propTypes = {
   name: PropTypes.string.isRequired,
   submitForm: PropTypes.func.isRequired,
   validateForm: PropTypes.func.isRequired,
-  values: PropTypes.object,
+  values: PropTypes.object
 }
 
 /**
@@ -98,9 +96,9 @@ function EnhancedFormik ({
       validateOnChange,
       handleSubmit: (values, formikBag) => {
         if (typeof handleSubmit === 'function') {
-          addCustomSubmitHandlerResult(handleSubmit(values, formikBag))
+          addCustomSubmitHandlerResult(handleSubmit(values, formikBag), name)
         }
-      },
+      }
     })(FormikWrapper)
     setIsReady(true)
     setEnhancedComponent(() => EnhancedFormikComponent)
@@ -119,7 +117,7 @@ EnhancedFormik.propTypes = {
   validationSchema: PropTypes.object,
   validateOnBlur: PropTypes.bool,
   validateOnChange: PropTypes.bool,
-  handleSubmit: PropTypes.func,
+  handleSubmit: PropTypes.func
 }
 
 export default EnhancedFormik

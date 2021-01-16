@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react'
+import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
+import { useLocalObservable } from 'mobx-react-lite'
 
 import {
   FormSubmitContext,
   FormValidationContext,
-  FormValuesContext,
+  FormValuesContext
 } from './form-contexts'
 
 /**
@@ -19,71 +20,17 @@ function FormContextWrapper ({
   children,
   initialFormValues,
   initialSubmitHandlers,
-  initialValidationHandlers,
+  initialValidationHandlers
 }) {
-  const [submitHandlers, setSubmitHandlers] = useState(initialSubmitHandlers)
-  const [validationHandlers, setValidationHandlers] = useState(initialValidationHandlers)
-  const [formValues, setFormValues] = useState(initialFormValues)
+  const submitHandlers = useRef(initialSubmitHandlers)
+  const validationHandlers = useRef(initialValidationHandlers)
+  const formValues = useLocalObservable(() => initialFormValues)
 
-  const addSubmitHandler = useCallback((handler) => {
-    setSubmitHandlers((prevState) => Object.assign({}, prevState, handler))
-  }, [setSubmitHandlers])
-
-  const removeSubmitHandler = useCallback((handler) => {
-    setSubmitHandlers((prevState) => {
-      const newState = Object.assign({}, prevState)
-      delete newState[handler]
-      return newState
-    })
-  }, [setSubmitHandlers])
-
-  const addValidationHandler = useCallback((handler) => {
-    setValidationHandlers((prevState) => Object.assign({}, prevState, handler))
-  }, [setValidationHandlers])
-
-  const removeValidationHandler = useCallback((handler) => {
-    setValidationHandlers((prevState) => {
-      const newState = Object.assign({}, prevState)
-      delete newState[handler]
-      return newState
-    })
-  }, [setValidationHandlers])
-
-  const addFormValues = useCallback((values) => {
-    setFormValues((prevState) => Object.assign({}, prevState, values))
-  }, [setFormValues])
-
-  const removeFormValues = useCallback((formName) => {
-    setFormValues((prevState) => {
-      const newState = Object.assign({}, prevState)
-      delete newState[formName]
-      return newState
-    })
-  }, [setFormValues])
-
-  // todo: evaluate if condesning contexts is worthwhile
+  // todo: still evaluate if condensing contexts is worthwhile - maybe so with the switch to mobx
   return (
-    <FormValuesContext.Provider
-      value={{
-        formValues,
-        addFormValues,
-        removeFormValues,
-      }}
-    >
-      <FormValidationContext.Provider
-        value={{
-          validationHandlers,
-          addValidationHandler,
-          removeValidationHandler,
-        }}
-      >
-        <FormSubmitContext.Provider
-          value={{
-            submitHandlers,
-            addSubmitHandler,
-            removeSubmitHandler,
-          }}
-        >
+    <FormValuesContext.Provider value={formValues}>
+      <FormValidationContext.Provider value={validationHandlers.current}>
+        <FormSubmitContext.Provider value={submitHandlers.current}>
           {children}
         </FormSubmitContext.Provider>
       </FormValidationContext.Provider>
@@ -96,14 +43,14 @@ FormContextWrapper.propTypes = {
   initialCustomSubmitHandlers: PropTypes.objectOf(PropTypes.func),
   initialFormValues: PropTypes.object,
   initialSubmitHandlers: PropTypes.objectOf(PropTypes.func),
-  initialValidationHandlers: PropTypes.objectOf(PropTypes.func),
+  initialValidationHandlers: PropTypes.objectOf(PropTypes.func)
 }
 
 FormContextWrapper.defaultProps = {
   initialCustomSubmitHandlers: {},
   initialFormValues: {},
   initialSubmitHandlers: {},
-  initialValidationHandlers: {},
+  initialValidationHandlers: {}
 }
 
 export default FormContextWrapper

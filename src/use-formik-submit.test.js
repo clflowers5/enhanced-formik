@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types,no-console */
 import React from 'react'
-import { renderHook, act } from '@testing-library/react-hooks'
+import { act, renderHook } from '@testing-library/react-hooks'
 
 import useFormikSubmit, { addCustomSubmitHandlerResult } from './use-formik-submit'
 import FormContextWrapper from './form-context-wrapper'
@@ -26,14 +26,17 @@ describe('useFormikSubmit', () => {
     const mockOnError = jest.fn()
     const mockSubmitHandler = jest.fn()
     const mockValidationHandler = jest.fn(() => ({ foo: 'woops!' }))
+    // todo: validate all of the mockFormValues in this test file
     const mockFormValues = {
-      foo: 'bar',
-      bar: 'baz',
-      baz: {
-        foo: 'zoink',
-        bar: 'derp',
-      },
-      bing: ['yolo'],
+      myForm: {
+        foo: 'bar',
+        bar: 'baz',
+        baz: {
+          foo: 'zoink',
+          bar: 'derp'
+        },
+        bing: ['yolo']
+      }
     }
 
     const wrapper = ({ children }) => (
@@ -48,7 +51,7 @@ describe('useFormikSubmit', () => {
 
     const { result, rerender } = renderHook(() => useFormikSubmit({
       onSubmit: mockOnSubmit,
-      onError: mockOnError,
+      onError: mockOnError
     }), { wrapper })
 
     act(async () => {
@@ -70,9 +73,9 @@ describe('useFormikSubmit', () => {
       bar: 'baz',
       baz: {
         foo: 'zoink',
-        bar: 'derp',
+        bar: 'derp'
       },
-      bing: ['yolo'],
+      bing: ['yolo']
     }
 
     const wrapper = ({ children }) => (
@@ -86,7 +89,7 @@ describe('useFormikSubmit', () => {
     )
 
     const { result, rerender } = renderHook(() => useFormikSubmit({
-      onSubmit: mockOnSubmit,
+      onSubmit: mockOnSubmit
     }), { wrapper })
 
     act(async () => {
@@ -109,9 +112,9 @@ describe('useFormikSubmit', () => {
       bar: 'baz',
       baz: {
         foo: 'zoink',
-        bar: 'derp',
+        bar: 'derp'
       },
-      bing: ['yolo'],
+      bing: ['yolo']
     }
 
     const wrapper = ({ children }) => (
@@ -126,7 +129,7 @@ describe('useFormikSubmit', () => {
 
     const { result, rerender } = renderHook(() => useFormikSubmit({
       onSubmit: mockOnSubmit,
-      onError: mockOnError,
+      onError: mockOnError
     }), { wrapper })
 
     act(async () => {
@@ -146,13 +149,15 @@ describe('useFormikSubmit', () => {
     const mockValidationHandler = jest.fn(() => ({}))
     const mockCustomSubmitHandler = jest.fn()
     const mockFormValues = {
-      foo: 'bar',
-      bar: 'baz',
-      baz: {
-        foo: 'zoink',
-        bar: 'derp',
-      },
-      bing: ['yolo'],
+      myForm: {
+        foo: 'bar',
+        bar: 'baz',
+        baz: {
+          foo: 'zoink',
+          bar: 'derp'
+        },
+        bing: ['yolo']
+      }
     }
 
     const wrapper = ({ children }) => (
@@ -167,14 +172,16 @@ describe('useFormikSubmit', () => {
 
     const { result, rerender } = renderHook(() => useFormikSubmit({
       onSubmit: mockOnSubmit,
-      onError: mockOnError,
+      onError: mockOnError
     }), { wrapper })
 
-    addCustomSubmitHandlerResult(new Promise(resolve =>
-      setTimeout(() => {
-        mockCustomSubmitHandler()
-        resolve({ customKey: 'Frosted-Flakes!' })
-      }, 1000)),
+    addCustomSubmitHandlerResult(
+      new Promise(resolve =>
+        setTimeout(() => {
+          mockCustomSubmitHandler()
+          resolve({ customKey: 'Frosted-Flakes!' })
+        }, 1000)),
+      'myForm'
     )
 
     act(async () => {
@@ -184,8 +191,10 @@ describe('useFormikSubmit', () => {
       rerender()
       // resolved value is added to formValues
       expect(mockOnSubmit).toHaveBeenCalledWith({
-        ...mockFormValues,
-        customKey: 'Frosted-Flakes!',
+        myForm: {
+          ...mockFormValues.myForm,
+          customKey: 'Frosted-Flakes!'
+        }
       })
       expect(mockCustomSubmitHandler).toHaveBeenCalledTimes(1)
       expect(mockOnError).not.toHaveBeenCalled()
@@ -201,7 +210,7 @@ describe('useFormikSubmit', () => {
     const mockValidationHandler = jest.fn(() => ({ bar: 'woops!' }))
     const mockFormValues = {
       foo: 'bar',
-      bar: 'baz',
+      bar: 'baz'
     }
 
     // setup document inputs / helper data attributes. Can't render actual jsx to DOM with the renderHook fn
@@ -245,7 +254,7 @@ describe('useFormikSubmit', () => {
     const { result, rerender } = renderHook(() => useFormikSubmit({
       onSubmit: mockOnSubmit,
       onError: mockOnError,
-      focusFirstError: true,
+      focusFirstError: true
     }), { wrapper })
 
     await result.current()

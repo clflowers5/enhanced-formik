@@ -1,7 +1,7 @@
-import { useEffect, useState, useContext } from 'react'
-import { isObject, flatMap, isFunction } from 'lodash'
+import { useContext, useEffect, useState } from 'react'
+import { flatMap, isFunction, isObject } from 'lodash'
 
-import { FormSubmitContext, FormValuesContext, FormValidationContext } from './form-contexts'
+import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
 
 /*
     Formik doesn't support awaiting `handleSubmit` by default.
@@ -16,8 +16,8 @@ const customSubmitHandlers = []
 /*
     Internal helper function, you should _not_ need to use this directly in your form.
  */
-function addCustomSubmitHandlerResult (handlerReturnValue) {
-  customSubmitHandlers.push(Promise.resolve(handlerReturnValue))
+function addCustomSubmitHandlerResult (handlerReturnValue, formName) {
+  customSubmitHandlers.push({ value: Promise.resolve(handlerReturnValue), formName })
 }
 
 function clearCustomSubmitHandlers () {
@@ -34,9 +34,9 @@ function flattenErrors (current) {
 function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
   const [errorMessageToFocus, setErrorMessageToFocus] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { submitHandlers } = useContext(FormSubmitContext)
-  const { validationHandlers } = useContext(FormValidationContext)
-  const { formValues, addFormValues } = useContext(FormValuesContext)
+  const submitHandlers = useContext(FormSubmitContext)
+  const validationHandlers = useContext(FormValidationContext)
+  const formValues = useContext(FormValuesContext)
 
   useEffect(() => {
     if (isSubmitting && formValues) {
@@ -58,21 +58,36 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
     }
   }, [errorMessageToFocus])
 
-  async function submit() {
+  async function submit () {
     // submitForm does not reject if invalid per docs
     // run all submit handlers
     await Promise.all(Object.values(submitHandlers).map(handler => handler()))
 
     // run custom submit handlers
     let customResults
+    let formNames
     try {
-      customResults = await Promise.all(customSubmitHandlers)
+      let callbacks
+      ({ callbacks, formNames } = customSubmitHandlers.reduce((carry, current) => {
+        carry.callbacks.push(current.value)
+        carry.formNames.push(current.formName)
+        return carry
+      }, { callbacks: [], formNames: [] }))
+      customResults = await Promise.all(callbacks)
     } catch (e) {
       // if errors occur during custom submit phase, clear out and abort submit
       clearCustomSubmitHandlers()
       return
     }
-    customResults.forEach(result => result && addFormValues(result))
+    customResults.forEach((result, index) => {
+      if (result) {
+        const formName = formNames[index]
+        formValues[formName] = {
+          ...formValues[formName],
+          ...result
+        }
+      }
+    })
 
     // run all validations and flatten error object
     const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))
@@ -101,5 +116,5 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
 
 export {
   useFormikSubmit as default,
-  addCustomSubmitHandlerResult,
+  addCustomSubmitHandlerResult
 }
