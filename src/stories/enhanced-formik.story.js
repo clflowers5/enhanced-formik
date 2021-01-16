@@ -1,4 +1,5 @@
 import React from 'react'
+import { action } from '@storybook/addon-actions'
 
 import { DebugFormValues, EnhancedFormik, Field, FieldArray, FormContextWrapper, SubmitButton } from '../index'
 
@@ -85,6 +86,7 @@ export function basicUsage () {
           initialValues={initialValues4}
           handleSubmit={(...props) => {
             if (props[0].what === 'what') {
+              alert('Custom Submit Handler - What cannot be what')
               throw new Error('What cannot be what')
             }
           }}
@@ -95,9 +97,8 @@ export function basicUsage () {
         </EnhancedFormik>
 
         <SubmitButton
-          onSubmit={(values) => {
-            alert(JSON.stringify(values))
-          }}
+          onSubmit={action('Form Submit')}
+          onError={action('Form Error')}
           style={{ marginTop: '3rem' }}
         >
           Submit Form

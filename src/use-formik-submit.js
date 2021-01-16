@@ -67,8 +67,12 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
     let customResults
     let formNames
     try {
-      const callbacks = customSubmitHandlers.map(customSubmit => customSubmit.value)
-      formNames = customSubmitHandlers.map(customSubmit => customSubmit.formName)
+      let callbacks
+      ({ callbacks, formNames } = customSubmitHandlers.reduce((carry, current) => {
+        carry.callbacks.push(current.value)
+        carry.formNames.push(current.formName)
+        return carry
+      }, { callbacks: [], formNames: [] }))
       customResults = await Promise.all(callbacks)
     } catch (e) {
       // if errors occur during custom submit phase, clear out and abort submit

@@ -1,12 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState, useContext } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { withFormik } from 'formik'
+import { runInAction } from 'mobx'
 
-import {
-  FormSubmitContext,
-  FormValidationContext,
-  FormValuesContext
-} from './form-contexts'
+import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
 import { addCustomSubmitHandlerResult } from './use-formik-submit'
 
 function FormWrapper ({ values, name, submitForm, validateForm, children }) {
@@ -17,8 +14,8 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
   useEffect(() => {
     formValues[name] = values
     return () => {
-      // todo: this triggers mobx warnings in tests, need to look into it
-      delete formValues[name]
+      // prevents mobx warnings in strict mode
+      runInAction(() => delete formValues[name])
     }
   }, [name, values])
 
