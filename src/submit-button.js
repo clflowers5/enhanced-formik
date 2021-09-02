@@ -17,7 +17,7 @@ function SubmitButton ({
   const submitForm = useFormikSubmit({
     onSubmit,
     onError,
-    focusFirstError,
+    focusFirstError
   })
   return (
     <Component
@@ -37,11 +37,11 @@ SubmitButton.propTypes = {
   className: PropTypes.string,
   focusFirstError: PropTypes.bool,
   onError: PropTypes.func,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 }
 
 SubmitButton.defaultProps = {
-  as: 'button',
+  as: 'button'
 }
 
 export default SubmitButton

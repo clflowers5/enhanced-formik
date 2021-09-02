@@ -1,12 +1,11 @@
 {
   "plugins": [
     "jest",
+    "react",
     "react-hooks"
   ],
   "extends": [
-    "standard",
-    "standard-react",
-    "react-app"
+    "plugin:react/recommended"
   ],
   "env": {
     "es6": true,
@@ -21,7 +20,9 @@
   "rules": {
     "react/jsx-curly-spacing": 0,
     "comma-dangle": 0,
-    "space-before-function-paren": 0
+    "space-before-function-paren": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "parser": "babel-eslint"
 }

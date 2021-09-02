@@ -104,7 +104,7 @@ function EnhancedFormik ({
     setEnhancedComponent(() => EnhancedFormikComponent)
     // we only ever want this to be created once per mount of a 'formik' form
     // todo: This disables usage of `enableReinitialize` - may want to examine this in the future.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [])
 
   return isReady ? <EnhancedComponent name={name} {...rest} /> : null

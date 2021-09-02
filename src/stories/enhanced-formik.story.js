@@ -85,10 +85,19 @@ export function basicUsage () {
           name='form4'
           initialValues={initialValues4}
           handleSubmit={(...props) => {
-            if (props[0].what === 'what') {
-              alert('Custom Submit Handler - What cannot be what')
-              throw new Error('What cannot be what')
-            }
+            return new Promise((resolve, reject) => {
+              if (props[0].what === 'what') {
+                setTimeout(() => {
+                  window.alert('Custom Submit Handler - What cannot be what')
+                  reject(new Error('What cannot be what async'))
+                  // throw new Error('What cannot be what')
+                }, 2000)
+              } else {
+                resolve({
+                  newKey: 'foobarlife'
+                })
+              }
+            })
           }}
         >
           <div>

@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "standard --fix && jest",
     "eject": "react-scripts eject",
     "storybook": "start-storybook",
     "build-storybook": "build-storybook -s public"
@@ -44,20 +44,23 @@
     "babel-eslint": "^10.0.2",
     "babel-jest": "^26.1.0",
     "eslint": "^6.1.0",
-    "eslint-config-standard": "^13.0.1",
-    "eslint-config-standard-react": "^8.0.0",
     "eslint-plugin-jest": "^22.15.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-standard": "^4.0.0",
     "jest": "^26.1.0",
     "react-test-renderer": "^16.13.1",
-    "standard": "^13.1.0",
+    "regenerator-runtime": "^0.13.7",
+    "standard": "^16.0.3",
     "yup": "^0.29.1"
   },
   "standard": {
     "env": [
       "jest"
+    ]
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./setupTests.js"
     ]
   }
 }

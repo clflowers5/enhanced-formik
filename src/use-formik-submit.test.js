@@ -5,7 +5,6 @@ import { act, renderHook } from '@testing-library/react-hooks'
 import useFormikSubmit, { addCustomSubmitHandlerResult } from './use-formik-submit'
 import FormContextWrapper from './form-context-wrapper'
 
-// todo: get jest-babel setup to actually run tests
 describe('useFormikSubmit', () => {
   let originalError
 
