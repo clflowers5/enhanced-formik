@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types,no-console */
 import React from 'react'
-import { cleanup, fireEvent, render } from '@testing-library/react'
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
 import { DebugFormValues, EnhancedFormik, Field, FormContextWrapper } from './index'
@@ -24,7 +24,7 @@ describe('DebugFormValues', () => {
     jest.clearAllMocks()
   })
 
-  it('displays form values in real time as updates are made', () => {
+  it('displays form values in real time as updates are made', async () => {
     const { getByLabelText, getByTestId } = render(
       <FormContextWrapper>
         <EnhancedFormik
@@ -43,15 +43,15 @@ describe('DebugFormValues', () => {
 
     const input = getByLabelText('Foo Label')
     const debugValues = getByTestId('rtl-debug-form-values')
-    expect(debugValues.innerHTML.replace(/\n/g, '').replace(/\s/g, ''))
-      .toEqual('{"myForm":{"foo":"bar"}}')
+    await waitFor(() => expect(debugValues.innerHTML.replace(/\n/g, '').replace(/\s/g, ''))
+      .toEqual('{"myForm":{"foo":"bar"}}'))
 
     fireEvent.change(input, { target: { value: 'lolcats' } })
-    expect(debugValues.innerHTML.replace(/\n/g, '').replace(/\s/g, ''))
-      .toEqual('{"myForm":{"foo":"lolcats"}}')
+    await waitFor(() => expect(debugValues.innerHTML.replace(/\n/g, '').replace(/\s/g, ''))
+      .toEqual('{"myForm":{"foo":"lolcats"}}'))
 
     fireEvent.change(input, { target: { value: 'cool-beans' } })
-    expect(debugValues.innerHTML.replace(/\n/g, '').replace(/\s/g, ''))
-      .toEqual('{"myForm":{"foo":"cool-beans"}}')
+    await waitFor(() => expect(debugValues.innerHTML.replace(/\n/g, '').replace(/\s/g, ''))
+      .toEqual('{"myForm":{"foo":"cool-beans"}}'))
   })
 })

@@ -1,23 +1,30 @@
 import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { withFormik } from 'formik'
-import { runInAction } from 'mobx'
 
-import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
+import { FormSubmitContext, FormValidationContext } from './form-contexts'
 import { addCustomSubmitHandlerResult } from './use-formik-submit'
+import formValues from './state/form-values'
 
 function FormWrapper ({ values, name, submitForm, validateForm, children }) {
-  const formValues = useContext(FormValuesContext)
   const submitHandlers = useContext(FormSubmitContext)
   const validationHandlers = useContext(FormValidationContext)
 
   useEffect(() => {
+    // todo: cf - capture these mutations in actions
     formValues[name] = values
     return () => {
-      // prevents mobx warnings in strict mode
-      runInAction(() => delete formValues[name])
+      delete formValues[name]
     }
   }, [name, values])
+
+  // useEffect(function createFormValues () {
+  //   formValues[name] = values
+  //   return () => {
+  //     // prevents mobx warnings in strict mode
+  //     runInAction(() => delete formValues[name])
+  //   }
+  // }, [name, values])
 
   useEffect(() => {
     submitHandlers[name] = submitForm

@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import { flatMap, isFunction, isObject } from 'lodash'
 
-import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
+import { FormSubmitContext, FormValidationContext } from './form-contexts'
+import { useFormValues } from './state/form-values'
 
 /*
     Formik doesn't support awaiting `handleSubmit` by default.
@@ -36,14 +37,16 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const submitHandlers = useContext(FormSubmitContext)
   const validationHandlers = useContext(FormValidationContext)
-  const formValues = useContext(FormValuesContext)
+  // const formValues = useContext(FormValuesContext)
+  // const formValues = useSnapshot(formValuesState.values)
+  const { snapshot: formValuesSnapshot, state: formValues } = useFormValues()
 
   useEffect(() => {
     if (isSubmitting && formValues) {
-      onSubmit(formValues)
+      onSubmit(formValuesSnapshot)
       setIsSubmitting(false)
     }
-  }, [isSubmitting, formValues, onSubmit])
+  }, [isSubmitting, formValuesSnapshot, onSubmit])
 
   useEffect(function focusFirstFormError () {
     if (errorMessageToFocus) {

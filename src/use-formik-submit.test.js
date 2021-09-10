@@ -25,7 +25,6 @@ describe('useFormikSubmit', () => {
     const mockOnError = jest.fn()
     const mockSubmitHandler = jest.fn()
     const mockValidationHandler = jest.fn(() => ({ foo: 'woops!' }))
-    // todo: validate all of the mockFormValues in this test file
     const mockFormValues = {
       myForm: {
         foo: 'bar',
@@ -107,13 +106,15 @@ describe('useFormikSubmit', () => {
     const mockSubmitHandler = jest.fn()
     const mockValidationHandler = jest.fn(() => ({}))
     const mockFormValues = {
-      foo: 'bar',
-      bar: 'baz',
-      baz: {
-        foo: 'zoink',
-        bar: 'derp'
-      },
-      bing: ['yolo']
+      myForm: {
+        foo: 'bar',
+        bar: 'baz',
+        baz: {
+          foo: 'zoink',
+          bar: 'derp'
+        },
+        bing: ['yolo']
+      }
     }
 
     const wrapper = ({ children }) => (

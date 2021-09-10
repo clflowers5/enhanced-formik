@@ -1,12 +1,8 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { useLocalObservable } from 'mobx-react-lite'
 
-import {
-  FormSubmitContext,
-  FormValidationContext,
-  FormValuesContext
-} from './form-contexts'
+import { FormSubmitContext, FormValidationContext } from './form-contexts'
+import { setFormValuesState } from './state/form-values'
 
 /**
  * FormContextWrapper
@@ -24,17 +20,24 @@ function FormContextWrapper ({
 }) {
   const submitHandlers = useRef(initialSubmitHandlers)
   const validationHandlers = useRef(initialValidationHandlers)
-  const formValues = useLocalObservable(() => initialFormValues)
+  // const formValues = useLocalObservable(() => initialFormValues)
+  // const formValues = useSnapshot(formValuesState)
+
+  useEffect(function setInitialFormValues () {
+    if (initialFormValues) {
+      setFormValuesState(initialFormValues)
+    }
+  }, [])
 
   // todo: still evaluate if condensing contexts is worthwhile - maybe so with the switch to mobx
   return (
-    <FormValuesContext.Provider value={formValues}>
-      <FormValidationContext.Provider value={validationHandlers.current}>
-        <FormSubmitContext.Provider value={submitHandlers.current}>
-          {children}
-        </FormSubmitContext.Provider>
-      </FormValidationContext.Provider>
-    </FormValuesContext.Provider>
+    // <FormValuesContext.Provider value={formValues}>
+    <FormValidationContext.Provider value={validationHandlers.current}>
+      <FormSubmitContext.Provider value={submitHandlers.current}>
+        {children}
+      </FormSubmitContext.Provider>
+    </FormValidationContext.Provider>
+    // </FormValuesContext.Provider>
   )
 }
 
