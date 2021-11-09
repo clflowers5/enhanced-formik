@@ -1,37 +1,47 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { withFormik } from 'formik'
-import { runInAction } from 'mobx'
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { withFormik } from "formik";
+import { runInAction } from "mobx";
 
-import { FormSubmitContext, FormValidationContext, FormValuesContext } from './form-contexts'
-import { addCustomSubmitHandlerResult } from './use-formik-submit'
+import {
+  FormSubmitContext,
+  FormValidationContext,
+  FormValuesContext,
+} from "./form-contexts";
+import { addCustomSubmitHandlerResult } from "./use-formik-submit";
 
-function FormWrapper ({ values, name, submitForm, validateForm, children }) {
-  const formValues = useContext(FormValuesContext)
-  const submitHandlers = useContext(FormSubmitContext)
-  const validationHandlers = useContext(FormValidationContext)
+function FormWrapper({ values, name, submitForm, validateForm, children }) {
+  const formValues = useContext(FormValuesContext);
+  const submitHandlers = useContext(FormSubmitContext);
+  const validationHandlers = useContext(FormValidationContext);
 
-  useEffect(() => {
-    formValues[name] = values
-    return () => {
-      // prevents mobx warnings in strict mode
-      runInAction(() => delete formValues[name])
-    }
-  }, [name, values])
+  useEffect(
+    function handleValuesAssignment() {
+      formValues[name] = values;
+      return () => {
+        // prevents mobx warnings in strict mode
+        runInAction(() => delete formValues[name]);
+      };
+    },
+    [formValues, name, values]
+  );
 
-  useEffect(() => {
-    submitHandlers[name] = submitForm
-    validationHandlers[name] = validateForm
-    return () => {
-      delete submitHandlers[name]
-      delete validationHandlers[name]
-    }
-  }, [name, submitForm, validateForm])
+  useEffect(
+    function handleSubmitAndValidationAssignment() {
+      submitHandlers[name] = submitForm;
+      validationHandlers[name] = validateForm;
+      return () => {
+        delete submitHandlers[name];
+        delete validationHandlers[name];
+      };
+    },
+    [submitHandlers, validationHandlers, name, submitForm, validateForm]
+  );
 
-  return children
+  return children;
 }
 
-function FormikWrapper ({ children, name, render, ...props }) {
+function FormikWrapper({ children, name, render, ...props }) {
   return (
     <FormWrapper
       values={props.values}
@@ -39,15 +49,16 @@ function FormikWrapper ({ children, name, render, ...props }) {
       submitForm={props.submitForm}
       validateForm={props.validateForm}
     >
-      {// honor render first, then fallback to children
-        typeof render === 'function'
+      {
+        // honor render first, then fallback to children
+        typeof render === "function"
           ? render(props)
-          : typeof children === 'function'
-            ? children(props)
-            : children
+          : typeof children === "function"
+          ? children(props)
+          : children
       }
     </FormWrapper>
-  )
+  );
 }
 
 FormikWrapper.propTypes = {
@@ -56,8 +67,8 @@ FormikWrapper.propTypes = {
   name: PropTypes.string.isRequired,
   submitForm: PropTypes.func.isRequired,
   validateForm: PropTypes.func.isRequired,
-  values: PropTypes.object
-}
+  values: PropTypes.object,
+};
 
 /**
  * EnhancedFormik - Component
@@ -74,7 +85,7 @@ FormikWrapper.propTypes = {
  * @returns {null || EnhancedFormik}
  * @constructor
  */
-function EnhancedFormik ({
+function EnhancedFormik({
   name,
   initialValues,
   isInitialValid,
@@ -84,8 +95,8 @@ function EnhancedFormik ({
   handleSubmit,
   ...rest
 }) {
-  const [isReady, setIsReady] = useState(false)
-  const [EnhancedComponent, setEnhancedComponent] = useState(null)
+  const [isReady, setIsReady] = useState(false);
+  const [EnhancedComponent, setEnhancedComponent] = useState(null);
 
   useLayoutEffect(() => {
     const EnhancedFormikComponent = withFormik({
@@ -95,19 +106,19 @@ function EnhancedFormik ({
       validateOnBlur,
       validateOnChange,
       handleSubmit: (values, formikBag) => {
-        if (typeof handleSubmit === 'function') {
-          addCustomSubmitHandlerResult(handleSubmit(values, formikBag), name)
+        if (typeof handleSubmit === "function") {
+          addCustomSubmitHandlerResult(handleSubmit(values, formikBag), name);
         }
-      }
-    })(FormikWrapper)
-    setIsReady(true)
-    setEnhancedComponent(() => EnhancedFormikComponent)
+      },
+    })(FormikWrapper);
+    setIsReady(true);
+    setEnhancedComponent(() => EnhancedFormikComponent);
     // we only ever want this to be created once per mount of a 'formik' form
     // todo: This disables usage of `enableReinitialize` - may want to examine this in the future.
     // eslint-disable-next-line
-  }, [])
+  }, []);
 
-  return isReady ? <EnhancedComponent name={name} {...rest} /> : null
+  return isReady ? <EnhancedComponent name={name} {...rest} /> : null;
 }
 
 EnhancedFormik.propTypes = {
@@ -117,7 +128,7 @@ EnhancedFormik.propTypes = {
   validationSchema: PropTypes.object,
   validateOnBlur: PropTypes.bool,
   validateOnChange: PropTypes.bool,
-  handleSubmit: PropTypes.func
-}
+  handleSubmit: PropTypes.func,
+};
 
-export default EnhancedFormik
+export default EnhancedFormik;

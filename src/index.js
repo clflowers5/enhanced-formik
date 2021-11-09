@@ -1,11 +1,13 @@
-import { FastField, Field, Form, FieldArray } from 'formik'
+import { FastField, Field, FieldArray, Form } from "formik";
 
-import FormContextWrapper from './form-context-wrapper'
-import DebugFormValues from './debug-form-values'
-import EnhancedFormik from './enhanced-formik'
-import SubmitButton from './submit-button'
-import useFormikSubmit from './use-formik-submit'
-import { FormValuesContext } from './form-contexts'
+import FormContextWrapper from "./form-context-wrapper";
+import DebugFormValues from "./debug-form-values";
+import EnhancedFormik from "./enhanced-formik";
+import SubmitButton from "./submit-button";
+import useFormikSubmit from "./use-formik-submit";
+import { FormValuesContext } from "./form-contexts";
+
+import "./bootstrap";
 
 export {
   FormContextWrapper,
@@ -17,5 +19,5 @@ export {
   FieldArray,
   Form,
   SubmitButton,
-  useFormikSubmit
-}
+  useFormikSubmit,
+};
