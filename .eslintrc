@@ -5,7 +5,8 @@
     "react-hooks"
   ],
   "extends": [
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:valtio/recommended"
   ],
   "env": {
     "es6": true,
@@ -22,7 +23,9 @@
     "comma-dangle": 0,
     "space-before-function-paren": 0,
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "valtio/state-snapshot-rule": "warn",
+    "valtio/avoid-this-in-proxy" :"warn"
   },
   "parser": "babel-eslint"
 }

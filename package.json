@@ -4,13 +4,12 @@
   "private": true,
   "dependencies": {
     "formik": "^1.5.8",
-    "mobx": "^6.0.4",
-    "mobx-react-lite": "^3.1.6",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.0",
-    "valtio": "^1.2.2"
+    "valtio": "^1.2.5"
   },
   "scripts": {
     "build": "react-scripts build",
@@ -49,6 +48,7 @@
     "eslint-plugin-jest": "^22.15.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-valtio": "^0.4.1",
     "jest": "^26.1.0",
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "react-test-renderer": "^16.13.1",

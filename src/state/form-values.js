@@ -1,11 +1,10 @@
 import { proxy, useSnapshot } from 'valtio'
-import { useProxy } from 'valtio/macro'
 
 let formValuesState = proxy({})
 
 // continue to elaborate on this
 function setFormValuesState (formValues) {
-  formValuesState = proxy({})
+  // formValuesState = proxy({})
   Object.entries(formValues).forEach(([key, value]) => {
     formValuesState[key] = value
   })

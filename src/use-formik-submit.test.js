@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types,no-console */
 import React from 'react'
-import { act, renderHook } from '@testing-library/react-hooks'
+import { act, cleanup, renderHook } from '@testing-library/react-hooks'
 
 import useFormikSubmit, { addCustomSubmitHandlerResult } from './use-formik-submit'
 import FormContextWrapper from './form-context-wrapper'
@@ -13,6 +13,10 @@ describe('useFormikSubmit', () => {
   beforeAll(() => {
     originalError = console.error
     console.error = jest.fn()
+  })
+
+  afterEach(() => {
+    cleanup()
   })
 
   afterAll(() => {
@@ -67,13 +71,15 @@ describe('useFormikSubmit', () => {
     const mockSubmitHandler = jest.fn()
     const mockValidationHandler = jest.fn(() => ({ foo: 'woops!' }))
     const mockFormValues = {
-      foo: 'bar',
-      bar: 'baz',
-      baz: {
-        foo: 'zoink',
-        bar: 'derp'
-      },
-      bing: ['yolo']
+      myForm: {
+        foo: 'bar',
+        bar: 'baz',
+        baz: {
+          foo: 'zoink',
+          bar: 'derp'
+        },
+        bing: ['yolo']
+      }
     }
 
     const wrapper = ({ children }) => (

@@ -20,24 +20,19 @@ function FormContextWrapper ({
 }) {
   const submitHandlers = useRef(initialSubmitHandlers)
   const validationHandlers = useRef(initialValidationHandlers)
-  // const formValues = useLocalObservable(() => initialFormValues)
-  // const formValues = useSnapshot(formValuesState)
 
   useEffect(function setInitialFormValues () {
     if (initialFormValues) {
       setFormValuesState(initialFormValues)
     }
-  }, [])
+  }, [initialFormValues])
 
-  // todo: still evaluate if condensing contexts is worthwhile - maybe so with the switch to mobx
   return (
-    // <FormValuesContext.Provider value={formValues}>
     <FormValidationContext.Provider value={validationHandlers.current}>
       <FormSubmitContext.Provider value={submitHandlers.current}>
         {children}
       </FormSubmitContext.Provider>
     </FormValidationContext.Provider>
-    // </FormValuesContext.Provider>
   )
 }
 

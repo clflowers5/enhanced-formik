@@ -18,14 +18,6 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
     }
   }, [name, values])
 
-  // useEffect(function createFormValues () {
-  //   formValues[name] = values
-  //   return () => {
-  //     // prevents mobx warnings in strict mode
-  //     runInAction(() => delete formValues[name])
-  //   }
-  // }, [name, values])
-
   useEffect(() => {
     submitHandlers[name] = submitForm
     validationHandlers[name] = validateForm
@@ -33,7 +25,7 @@ function FormWrapper ({ values, name, submitForm, validateForm, children }) {
       delete submitHandlers[name]
       delete validationHandlers[name]
     }
-  }, [name, submitForm, validateForm])
+  }, [name, submitForm, submitHandlers, validateForm, validationHandlers])
 
   return children
 }

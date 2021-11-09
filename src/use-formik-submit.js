@@ -46,7 +46,7 @@ function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
       onSubmit(formValuesSnapshot)
       setIsSubmitting(false)
     }
-  }, [isSubmitting, formValuesSnapshot, onSubmit])
+  }, [isSubmitting, formValuesSnapshot, onSubmit, formValues])
 
   useEffect(function focusFirstFormError () {
     if (errorMessageToFocus) {
