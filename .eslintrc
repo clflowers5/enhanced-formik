@@ -26,6 +26,5 @@
     "react-hooks/exhaustive-deps": "warn",
     "valtio/state-snapshot-rule": "warn",
     "valtio/avoid-this-in-proxy" :"warn"
-  },
-  "parser": "babel-eslint"
+  }
 }

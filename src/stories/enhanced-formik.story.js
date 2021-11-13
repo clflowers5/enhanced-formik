@@ -1,65 +1,63 @@
-import React from 'react'
-import { action } from '@storybook/addon-actions'
+import React from "react";
+import { action } from "@storybook/addon-actions";
 
-import { DebugFormValues, EnhancedFormik, Field, FieldArray, FormContextWrapper, SubmitButton } from '../index'
+import {
+  DebugFormValues,
+  EnhancedFormik,
+  Field,
+  FieldArray,
+  FormContextWrapper,
+  SubmitButton,
+} from "../index";
 
-export default { title: 'Enhanced Formik' }
+export default { title: "Enhanced Formik" };
 
-export function basicUsage () {
+export function basicUsage() {
   const initialValues1 = {
-    foo: '',
-    baz: ''
-  }
+    foo: "",
+    baz: "",
+  };
 
   const initialValues2 = {
-    yo: '',
-    lo: ''
-  }
+    yo: "",
+    lo: "",
+  };
 
   const initialValues3 = {
     barList: [
       {
-        name: 'uno'
+        name: "uno",
       },
       {
-        name: 'ya'
-      }
-    ]
-  }
+        name: "ya",
+      },
+    ],
+  };
 
   const initialValues4 = {
-    what: 'what'
-  }
+    what: "what",
+  };
 
   return (
     <div>
       <h1>Forms</h1>
       <FormContextWrapper>
         <h2>Form 1</h2>
-        <EnhancedFormik
-          name='form1'
-          initialValues={initialValues1}
-        >
-          <Field name='foo' />
-          <Field name='baz' style={{ marginLeft: '1rem' }} />
+        <EnhancedFormik name="form1" initialValues={initialValues1}>
+          <Field name="foo" />
+          <Field name="baz" style={{ marginLeft: "1rem" }} />
         </EnhancedFormik>
 
         <h2>Form 2</h2>
-        <EnhancedFormik
-          name='form2'
-          initialValues={initialValues2}
-        >
-          <Field name='yo' />
-          <Field name='lo' style={{ marginLeft: '1rem' }} />
+        <EnhancedFormik name="form2" initialValues={initialValues2}>
+          <Field name="yo" />
+          <Field name="lo" style={{ marginLeft: "1rem" }} />
         </EnhancedFormik>
 
         <h2>Form 3...</h2>
-        <EnhancedFormik
-          name='form3'
-          initialValues={initialValues3}
-        >
+        <EnhancedFormik name="form3" initialValues={initialValues3}>
           {({ values }) => (
-            <FieldArray name='barList'>
+            <FieldArray name="barList">
               {({ push, remove }) => (
                 <div>
                   {values.barList.map((bar, index) => (
@@ -70,7 +68,7 @@ export function basicUsage () {
                         <button onClick={() => remove(index)}>Remove</button>
                       </div>
                       <div>
-                        <button onClick={() => push({ name: '' })}>Add</button>
+                        <button onClick={() => push({ name: "" })}>Add</button>
                       </div>
                     </div>
                   ))}
@@ -82,33 +80,33 @@ export function basicUsage () {
 
         <h2>Form 4... Custom Submit</h2>
         <EnhancedFormik
-          name='form4'
+          name="form4"
           initialValues={initialValues4}
           handleSubmit={(...props) => {
             return new Promise((resolve, reject) => {
-              if (props[0].what === 'what') {
+              if (props[0].what === "what") {
                 setTimeout(() => {
-                  window.alert('Custom Submit Handler - What cannot be what')
-                  reject(new Error('What cannot be what async'))
+                  window.alert("Custom Submit Handler - What cannot be what");
+                  reject(new Error("What cannot be what async"));
                   // throw new Error('What cannot be what')
-                }, 2000)
+                }, 2000);
               } else {
                 resolve({
-                  newKey: 'foobarlife'
-                })
+                  newKey: "foobarlife",
+                });
               }
-            })
+            });
           }}
         >
           <div>
-            <Field name='what' />
+            <Field name="what" />
           </div>
         </EnhancedFormik>
 
         <SubmitButton
-          onSubmit={action('Form Submit')}
-          onError={action('Form Error')}
-          style={{ marginTop: '3rem' }}
+          onSubmit={action("Form Submit")}
+          onError={action("Form Error")}
+          style={{ marginTop: "3rem" }}
         >
           Submit Form
         </SubmitButton>
@@ -116,5 +114,5 @@ export function basicUsage () {
         <DebugFormValues />
       </FormContextWrapper>
     </div>
-  )
+  );
 }

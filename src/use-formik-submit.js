@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react'
-import { flatMap, isFunction, isObject } from 'lodash'
+import { useContext, useEffect, useState } from "react";
+import { flatMap, isFunction, isObject } from "lodash";
 
-import { FormSubmitContext, FormValidationContext } from './form-contexts'
-import { useFormValues } from './state/form-values'
+import { FormSubmitContext, FormValidationContext } from "./form-contexts";
+import { useFormValues } from "./state/form-values";
 
 /*
     Formik doesn't support awaiting `handleSubmit` by default.
@@ -12,112 +12,124 @@ import { useFormValues } from './state/form-values'
     will not be guaranteed to occur during the `submit` execution frame.
     A static array holding those callbacks is necessary to capture the Promises.
 */
-const customSubmitHandlers = []
+const customSubmitHandlers = [];
 
 /*
     Internal helper function, you should _not_ need to use this directly in your form.
  */
-function addCustomSubmitHandlerResult (handlerReturnValue, formName) {
-  customSubmitHandlers.push({ value: Promise.resolve(handlerReturnValue), formName })
+function addCustomSubmitHandlerResult(handlerReturnValue, formName) {
+  customSubmitHandlers.push({
+    value: Promise.resolve(handlerReturnValue),
+    formName,
+  });
 }
 
-function clearCustomSubmitHandlers () {
-  customSubmitHandlers.length = 0
+function clearCustomSubmitHandlers() {
+  customSubmitHandlers.length = 0;
 }
 
-function flattenErrors (current) {
+function flattenErrors(current) {
   if (isObject(current)) {
-    return flatMap(current, flattenErrors)
+    return flatMap(current, flattenErrors);
   }
-  return current
+  return current;
 }
 
-function useFormikSubmit ({ onSubmit, onError, focusFirstError = false }) {
-  const [errorMessageToFocus, setErrorMessageToFocus] = useState(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const submitHandlers = useContext(FormSubmitContext)
-  const validationHandlers = useContext(FormValidationContext)
+function useFormikSubmit({ onSubmit, onError, focusFirstError = false }) {
+  const [errorMessageToFocus, setErrorMessageToFocus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitHandlers = useContext(FormSubmitContext);
+  const validationHandlers = useContext(FormValidationContext);
   // const formValues = useContext(FormValuesContext)
   // const formValues = useSnapshot(formValuesState.values)
-  const { snapshot: formValuesSnapshot, state: formValues } = useFormValues()
+  const { snapshot: formValuesSnapshot, state: formValues } = useFormValues();
 
   useEffect(() => {
     if (isSubmitting && formValues) {
-      onSubmit(formValuesSnapshot)
-      setIsSubmitting(false)
+      onSubmit(formValuesSnapshot);
+      setIsSubmitting(false);
     }
-  }, [isSubmitting, formValuesSnapshot, onSubmit, formValues])
+  }, [isSubmitting, formValuesSnapshot, onSubmit, formValues]);
 
-  useEffect(function focusFirstFormError () {
-    if (errorMessageToFocus) {
-      const errorElement = document.querySelector(`[data-error-message="${errorMessageToFocus}"]`)
-      if (errorElement) {
-        const inputId = errorElement.getAttribute('data-error-for')
-        const inputElement = document.getElementById(inputId)
-        inputElement && inputElement.focus()
+  useEffect(
+    function focusFirstFormError() {
+      if (errorMessageToFocus) {
+        const errorElement = document.querySelector(
+          `[data-error-message="${errorMessageToFocus}"]`
+        );
+        if (errorElement) {
+          const inputId = errorElement.getAttribute("data-error-for");
+          const inputElement = document.getElementById(inputId);
+          inputElement && inputElement.focus();
+        }
+
+        setErrorMessageToFocus(null);
       }
+    },
+    [errorMessageToFocus]
+  );
 
-      setErrorMessageToFocus(null)
-    }
-  }, [errorMessageToFocus])
-
-  async function submit () {
+  async function submit() {
     // submitForm does not reject if invalid per docs
     // run all submit handlers
-    await Promise.all(Object.values(submitHandlers).map(handler => handler()))
+    await Promise.all(
+      Object.values(submitHandlers).map((handler) => handler())
+    );
 
     // run custom submit handlers
-    let customResults
-    let formNames
+    let customResults;
+    let formNames;
     try {
-      let callbacks
-      ({ callbacks, formNames } = customSubmitHandlers.reduce((carry, current) => {
-        carry.callbacks.push(current.value)
-        carry.formNames.push(current.formName)
-        return carry
-      }, { callbacks: [], formNames: [] }))
-      customResults = await Promise.all(callbacks)
+      let callbacks;
+      ({ callbacks, formNames } = customSubmitHandlers.reduce(
+        (carry, current) => {
+          carry.callbacks.push(current.value);
+          carry.formNames.push(current.formName);
+          return carry;
+        },
+        { callbacks: [], formNames: [] }
+      ));
+      customResults = await Promise.all(callbacks);
     } catch (e) {
       // if errors occur during custom submit phase, clear out and abort submit
-      clearCustomSubmitHandlers()
-      return
+      clearCustomSubmitHandlers();
+      return;
     }
     customResults.forEach((result, index) => {
       if (result) {
-        const formName = formNames[index]
+        const formName = formNames[index];
         formValues[formName] = {
           ...formValues[formName],
-          ...result
-        }
+          ...result,
+        };
       }
-    })
+    });
 
     // run all validations and flatten error object
-    const results = await Promise.all(Object.values(validationHandlers).map(handler => handler()))
-    const validationErrors = flatMap(results, flattenErrors)
+    const results = await Promise.all(
+      Object.values(validationHandlers).map((handler) => handler())
+    );
+    const validationErrors = flatMap(results, flattenErrors);
 
     // cleanup customSubmitHandlers added during submit process.
-    clearCustomSubmitHandlers()
+    clearCustomSubmitHandlers();
 
     if (validationErrors.length === 0) {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
     } else {
       if (focusFirstError) {
-        setErrorMessageToFocus(validationErrors[0])
+        setErrorMessageToFocus(validationErrors[0]);
       }
 
-      setIsSubmitting(false)
+      setIsSubmitting(false);
 
       if (isFunction(onError)) {
-        onError(validationErrors)
+        onError(validationErrors);
       }
     }
   }
 
-  return submit
+  return submit;
 }
 
-export {
-  useFormikSubmit as default,
-  addCustomSubmitHandlerResult
-}
+export { useFormikSubmit as default, addCustomSubmitHandlerResult };

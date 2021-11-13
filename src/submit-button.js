@@ -1,10 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from "react";
+import PropTypes from "prop-types";
 
-import useFormikSubmit from './use-formik-submit'
+import useFormikSubmit from "./use-formik-submit";
 
 /* Helper to be used within a <FormContextWrapper> Component */
-function SubmitButton ({
+function SubmitButton({
   as,
   children,
   className,
@@ -13,22 +13,22 @@ function SubmitButton ({
   onSubmit,
   ...props
 }) {
-  const Component = as
+  const Component = as;
   const submitForm = useFormikSubmit({
     onSubmit,
     onError,
-    focusFirstError
-  })
+    focusFirstError,
+  });
   return (
     <Component
       className={className}
       onClick={submitForm}
-      data-testid='rtl-formik-submit-button'
+      data-testid="rtl-formik-submit-button"
       {...props}
     >
       {children}
     </Component>
-  )
+  );
 }
 
 SubmitButton.propTypes = {
@@ -37,11 +37,11 @@ SubmitButton.propTypes = {
   className: PropTypes.string,
   focusFirstError: PropTypes.bool,
   onError: PropTypes.func,
-  onSubmit: PropTypes.func.isRequired
-}
+  onSubmit: PropTypes.func.isRequired,
+};
 
 SubmitButton.defaultProps = {
-  as: 'button'
-}
+  as: "button",
+};
 
-export default SubmitButton
+export default SubmitButton;

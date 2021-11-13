@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react'
-import PropTypes from 'prop-types'
+import React, { useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 
-import { FormSubmitContext, FormValidationContext } from './form-contexts'
-import { setFormValuesState } from './state/form-values'
+import { FormSubmitContext, FormValidationContext } from "./form-contexts";
+import { setFormValuesState } from "./state/form-values";
 
 /**
  * FormContextWrapper
@@ -12,20 +12,23 @@ import { setFormValuesState } from './state/form-values'
  * @param initialValidationHandlers !!You should not need to provide this outside of tests!!
  * @param initialFormValues !!You should not need to provide this outside of tests!!
  */
-function FormContextWrapper ({
+function FormContextWrapper({
   children,
   initialFormValues,
   initialSubmitHandlers,
-  initialValidationHandlers
+  initialValidationHandlers,
 }) {
-  const submitHandlers = useRef(initialSubmitHandlers)
-  const validationHandlers = useRef(initialValidationHandlers)
+  const submitHandlers = useRef(initialSubmitHandlers);
+  const validationHandlers = useRef(initialValidationHandlers);
 
-  useEffect(function setInitialFormValues () {
-    if (initialFormValues) {
-      setFormValuesState(initialFormValues)
-    }
-  }, [initialFormValues])
+  useEffect(
+    function setInitialFormValues() {
+      if (initialFormValues) {
+        setFormValuesState(initialFormValues);
+      }
+    },
+    [initialFormValues]
+  );
 
   return (
     <FormValidationContext.Provider value={validationHandlers.current}>
@@ -33,7 +36,7 @@ function FormContextWrapper ({
         {children}
       </FormSubmitContext.Provider>
     </FormValidationContext.Provider>
-  )
+  );
 }
 
 FormContextWrapper.propTypes = {
@@ -41,14 +44,14 @@ FormContextWrapper.propTypes = {
   initialCustomSubmitHandlers: PropTypes.objectOf(PropTypes.func),
   initialFormValues: PropTypes.object,
   initialSubmitHandlers: PropTypes.objectOf(PropTypes.func),
-  initialValidationHandlers: PropTypes.objectOf(PropTypes.func)
-}
+  initialValidationHandlers: PropTypes.objectOf(PropTypes.func),
+};
 
 FormContextWrapper.defaultProps = {
   initialCustomSubmitHandlers: {},
   initialFormValues: {},
   initialSubmitHandlers: {},
-  initialValidationHandlers: {}
-}
+  initialValidationHandlers: {},
+};
 
-export default FormContextWrapper
+export default FormContextWrapper;

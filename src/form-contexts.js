@@ -1,11 +1,7 @@
-import { createContext } from 'react'
+import { createContext } from "react";
 
-const FormValuesContext = createContext({})
-const FormSubmitContext = createContext({})
-const FormValidationContext = createContext({})
+const FormValuesContext = createContext({});
+const FormSubmitContext = createContext({});
+const FormValidationContext = createContext({});
 
-export {
-  FormValuesContext,
-  FormSubmitContext,
-  FormValidationContext
-}
+export { FormValuesContext, FormSubmitContext, FormValidationContext };
